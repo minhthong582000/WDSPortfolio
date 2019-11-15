@@ -1,5 +1,5 @@
 const usermodel = require('../models/user')
-const createuser = async function (userDTO) {
+const createUser = async function (userDTO) {
     const newUser = new usermodel({ ...userDTO });
     await newUser.save();
 }
@@ -14,11 +14,11 @@ const checkUserExist = async function (email) {
         }
         else return false;
     }
-    catch (eror) {
+    catch (err) {
         return false;
-        console.log('email is not exist')
+        // console.log('email is not exist')
     }
-} 
+}
 const replaceEmail = async function (userDTO, replaceDTO) {
     const useremail = userDTO.email;
     const replaceUserEmail = replaceDTO.replaceEmail
@@ -27,4 +27,21 @@ const replaceEmail = async function (userDTO, replaceDTO) {
     } catch (err) {
         // console.log('something went wrong when replace email')
     }
+}
+const updateByID = async function (updateDoc) {
+    const {id, ...userDTO} = updateDoc;
+    try {
+        await usermodel.findByIdAndUpdate(id, userDTO)
+    }
+    catch (err) {
+        return false;
+        // console.log('email is not exist')
+    }
+}
+module.exports = {
+    createUser, 
+    removeUserByFindOne, 
+    checkUserExist, 
+    replaceEmail, 
+    updateByID
 }
