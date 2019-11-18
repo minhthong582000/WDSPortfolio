@@ -1,5 +1,5 @@
 const UserModel = require('../models/user')
-const password = require('../middleware/password')
+const password = require('../services/password')
 
 
 
