@@ -8,6 +8,8 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const session = require('express-session');
+const port = 3000;
+
 
 require('dotenv/config');
 require('./config/passport');
@@ -55,7 +57,7 @@ app.use('/admin', adminRouter);
 app.use('/blog', blogRouter);
 
 const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
-mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
+mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/wds', mongooseOption, (err) => {
     if(err)
         console.log('err');
     console.log('connected to my database');
@@ -85,4 +87,5 @@ res.status(err.status || 500);
 res.render('error');
 });
 
+app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 module.exports = app;
