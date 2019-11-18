@@ -11,8 +11,9 @@ async function createNewAcount(req, res, next) {
             "message": "error!"
         });
         return;
+        
     }
-    res.json({ Status: 'Successfully' });
+    res.json({ "message": 'Successfully' });
     next();
 }
 module.exports = { createNewAcount }
