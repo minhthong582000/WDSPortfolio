@@ -1,30 +1,34 @@
 var projectModel = require('../models/projects');
 
-const findByProjectId = async function (projectId){
+module.exports.findByProjectId = async function (projectId){
     let project = await projectModel.find({_id : projectId});
     return project;
 }
 
-const create = async function (projectDTO){
-    let project = new projectModel({...projectDTO});
+module.exports.create = async function (projectDTO){
+    //console.log(projectDTO);
+    const project = new projectModel({...projectDTO});
+    //console.log(project);
     return await project.save();
 }
 
-const update = async function(projectDTO) {
+module.exports.update = async function(projectDTO) {
     let { id, ...updateDoc } = projectDTO;
+    //console.log(projectDTO);
+    //console.log(projectDTO.id);
     if (!id) {
       throw new Error("Require Id");
     }
     await projectModel.findByIdAndUpdate(projectDTO.id, updateDoc);
 };
 
-const deleteById = async function(projectId){
+module.exports.deleteById = async function(projectId){
     await projectModel.findByIdAndDelete(projectId);
 }
 
-module.exports = {
-    findByProjectId,
-    create, 
-    update,
-    deleteById
-}
+// module.exports = {
+//     findByProjectId,
+//     create, 
+//     update,
+//     deleteById
+// }

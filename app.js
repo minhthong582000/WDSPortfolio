@@ -21,7 +21,7 @@ const usersRouter = require('./routes/users');
 const adminRouter = require('./routes/admin');
 const blogRouter = require('./routes/blog');
 
-const app = express();
+const app = express();  
 
 app.use(session({
     name: "passport",
@@ -82,7 +82,7 @@ res.locals.error = req.app.get('env') === 'development' ? err : {};
 
 // render the error page
 res.status(err.status || 500);
-res.render('error');
+res.send('error');
 });
 
 

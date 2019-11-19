@@ -1,45 +1,43 @@
-var express = require('express');
 var projectServices = require ('../services/projectServices');
 
-const info = async function(req,res,next){
+module.exports.info = async function(req,res,next){
     try {
         let projectId = req.body.id;
         let project = await projectServices.findByProjectId(projectId);
-        return res.json({project});
+        return res.send('/',{project});
     } catch (error) {
         return next(error);
     }
 }
 
-const create = async function(req,res,next){
+module.exports.create = async function(req,res,next){
     try {
-        let projectDTO  = req.body;
+        const projectDTO  = req.body;
+        //console.log(req.body);
         await projectServices.create(projectDTO);
+        return res.redirect('/');
     } catch (error) {
         return next(error);
     }
 }
 
-const update = async function(req, res, next){
+module.exports.update = async function(req, res, next){
     try {
         let projectDTO = req.body;
+        //console.log(projectDTO);
         await projectServices.update(projectDTO);
     } catch (error) {
         return next(error);
     }
 }
 
-const deleteById = async function(req, res, next){
+module.exports.deleteById = async function(req, res, next){
     try {
+        let projectId = req.body.id;
+        //console.log(req.body.id);
+        //console.log(projectId);
         await projectServices.deleteById(projectId);
     } catch (error) {
         return next(error);
     }
-}
-
-module.exports = {
-    info,
-    create,
-    update,
-    deleteById
 }
