@@ -11,17 +11,6 @@ const account = require('../controller/userController')
 // );
 // router.post('/',passport.authenticate('local-signup') 
 // );
-router.post('/', passport.authenticate('local-signup', { session: false }),
-    function (req, res, next) {
-        res.json({message:'Signup Success'});
-        next()
-    });
-// router.post('/', function (req, res, next) {
-//     passport.authenticate('local-signup', function (err, user, info) {
-//         if (err) return next(err)
-//         if (info)
-//             res.status(info.statusCode).send(info) ;
-//     })(req, res, next);
-// });
-
+router.post('/',
+    passport.authenticate('local-signup'));
 module.exports = router;

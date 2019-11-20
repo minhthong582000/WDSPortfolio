@@ -1,12 +1,11 @@
 const usermodel = require('../models/user')
-const createUser = async function (userDTO, done) {
-        let newUser = new usermodel({ ...userDTO });
-        newUser.pwd = await newUser.encryptPassword(newUser.pwd);
-        await newUser.save(function (err){
-            if (err)
-            console.log(err)
-        }
-    );
+const createUser = async function (userDTO,done) {
+    let newUser = new usermodel({ ...userDTO })
+    newUser.pwd = await newUser.encryptPassword(newUser.pwd)
+    await newUser.save(function (err) {
+        if (err)
+            throw err;
+    });
     return newUser;
 }
 // const removeUserByFindOne = async function (email) {
@@ -22,7 +21,6 @@ const isUserExist = async function (email, studentID) {
         else return false;
     }
     catch (err) {
-        console.log(err);
         return false;
         // console.log('email is not exist')
     }
