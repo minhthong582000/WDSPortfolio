@@ -8,7 +8,7 @@ const account = require('../controller/userController')
 //         res.json({message:'Signup Success'});
 //         next()
 //     });
-// for custom callback
+//custom callback
 router.post('/', function (req, res, next) {
     if (req.body.email && req.body.pwd) {
         passport.authenticate('local-signup', function (err, user, info) {
