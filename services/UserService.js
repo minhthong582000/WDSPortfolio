@@ -8,9 +8,7 @@ const createUser = async function (userDTO,done) {
     });
     return newUser;
 }
-// const removeUserByFindOne = async function (email) {
-//     return await usermodel.findByIdAndDelete(email);
-// }
+
 const isUserExist = async function (email, studentID) {
     try {
         let thisemailUser = await usermodel.findOne({ 'email': email })
@@ -25,6 +23,10 @@ const isUserExist = async function (email, studentID) {
         // console.log('email is not exist')
     }
 }
+//chưa dùng tới
+// const removeUserByFindOne = async function (email) {
+//     return await usermodel.findByIdAndDelete(email);
+// }
 // const replaceEmail = async function (userDTO, replaceDTO) {
 //     let useremail = userDTO.email;
 //     let replaceUserEmail = replaceDTO.replaceEmail
