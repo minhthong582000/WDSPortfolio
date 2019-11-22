@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hoạt động</title>
+</head>
+<body>
+    <%
+        if(typeof(activities) != 'undefined') {
+    %>
+    Số lượng hiện tại: <%- activities.length %>
+    <%
+        }
+    %>
+
+    <%
+        if(typeof(success) != 'undefined' && success != '') {
+    %>
+    Thông báo: <%- success %>
+    <%
+        }
+    %>
+
+    <%
+        if(typeof(fail) != 'undefined' && fail != '') {
+    %>
+    Thông báo: <%- fail %>
+    <%
+        }
+    %>
+
+    <%
+        if(typeof(activity) != 'undefined' && activity.length > 0) {
+    %>
+    Hoạt động: <%- activity %>
+    <%
+        }
+    %>
+    <form action="" method="post" encrypt="multipart/form-data">
+        <input type="text" name="name">
+        <input type="date" name="startDate">
+        <input type="date" name="endDate">
+        <input type="text" name="description">
+        <input type="file" name="images" multiple>
+        <button type="submit">Test</button>
+    </form>
+</body>
+</html>
