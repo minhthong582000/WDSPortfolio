@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Hoạt động</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="javascripts/script.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
 </head>
 <body>
     <%
@@ -18,7 +23,7 @@
     <%
         if(typeof(success) != 'undefined' && success != '') {
     %>
-    Thông báo: <%- success %>
+    Thông báo thành công: <%- success %>
     <%
         }
     %>
@@ -26,7 +31,7 @@
     <%
         if(typeof(fail) != 'undefined' && fail != '') {
     %>
-    Thông báo: <%- fail %>
+    Thông báo thất bại: <%- fail %>
     <%
         }
     %>
@@ -38,13 +43,39 @@
     <%
         }
     %>
-    <form action="" method="post" encrypt="multipart/form-data">
+    <form action="" method="post">
         <input type="text" name="name">
         <input type="date" name="startDate">
         <input type="date" name="endDate">
         <input type="text" name="description">
-        <input type="file" name="images" multiple>
-        <button type="submit">Test</button>
+        <button type="submit">Thêm hoạt động</button>
     </form>
+
+    <%
+        if(typeof(activities) != 'undefined' && activities.length > 0) {
+            for(var j = 0; j < activities.length; j++) {
+    %>
+    <h4 class="act" onclick="deleteActivity('<%- activities[j]._id %>')"><%- activities[j].name %></h4>
+    
+    <form action="/activities/<%- activities[j]._id %>/img" method="post" enctype="multipart/form-data">
+        <input type="file" name="images" multiple>
+        <button type="submit">Thêm hình ảnh</button>
+    </form>
+    <div class="img-list">
+    <%
+                for(var i = 0; i < activities[j].images.length; i++) {
+    %>
+        <div class="img" onclick="deleteImgActivity('<%- activities[j]._id %>', '<%- activities[j].images[i] %>')" style="background: url('/images/activities/<%- activities[j]._id %>/<%- activities[j].images[i] %>') no-repeat center center; background-size: cover"></div>
+    <%
+                }
+    %>
+    </div>
+    
+    <%
+            }
+        }
+    %>
+
+    <% include ./partials/script.ejs %>
 </body>
 </html>

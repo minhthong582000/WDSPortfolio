@@ -1,0 +1,30 @@
+<script>
+    //Xóa ảnh hoạt động - ajax - fixing
+    function deleteImgActivity(id, img) {
+        $.ajax({
+            method: 'DELETE',
+            url: `/activities/${id}/${img}`,
+            success: function (imgDeleted) {
+                location.reload();
+            },
+            error: function (err) {
+                alert('Lỗi json: '+err.responseJSON)
+            }
+        })
+    }
+
+    //Xóa hoạt động - ajax - fixing
+    function deleteActivity(id) {
+        $.ajax({
+            method: 'DELETE',
+            url: `/activities/${id}`,
+            success: function (idDeleted) {
+                //console.log('idDeleted: '+idDeleted);
+                location.reload();
+            },
+            error: function (err) {
+                alert('Lỗi json: '+err.responseJSON)
+            }
+        })
+    }
+</script>
