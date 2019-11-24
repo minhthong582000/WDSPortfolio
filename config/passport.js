@@ -1,6 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const DataUsers = require('../models/user')
+const userController = require('../controller/userController')
 const { check, validationResult } = require('express-validator');
 
 //local login
@@ -66,3 +67,4 @@ passport.deserializeUser(function(id, done) {
         }
     })
 })
+
