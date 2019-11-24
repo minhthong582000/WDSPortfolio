@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const session = require('express-session');
+const validator = require('express-validator');
 
 require('dotenv/config');
 require('./config/passport');
