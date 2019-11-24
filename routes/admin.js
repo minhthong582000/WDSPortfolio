@@ -7,9 +7,9 @@ router.get('/', userController.index);
 
 router.post('/create', userController.create);
 
-router.post('/update', userController.updateByStudentID)
+router.post('/update/:studentID', userController.updateByStudentID)
 
-router.post('/delete', userController.deleteByStudentID)
+router.post('/delete/:studentID', userController.deleteByStudentID)
 
 
 module.exports = router;
