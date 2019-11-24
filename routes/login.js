@@ -1,6 +1,5 @@
 var express = require('express');
 const passport = require('passport');
-const { check, validationResult } = require('express-validator');
 var router = express.Router();
 
 /* GET users listing. */
