@@ -1,15 +1,48 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 const DataUsers = require('../models/user')
-const userController = require('../controller/userController')
 const { check, validationResult } = require('express-validator');
+
+
+//login with facebook
+passport.use('facebook',new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "http://localhost:3000/login/auth/facebook/callback",
+    profileFields: ['emails']
+  },async function(accessToken, refreshToken, profile, done) {
+        DataUsers.findOne({'facebook.id': profile.id},function(err,user){
+            if(err){
+                return done(err);
+            }
+            if(user){
+                return done(null,user);
+            }
+            else{
+                var newUser = new DataUsers();
+                newUser.facebook.id = profile.id;
+                newUser.facebook.token = accessToken;
+                newUser.facebook.email = profile.emails[0].value;
+
+                newUser.save(function(err){
+                    if(err){
+                        throw err;
+                    }
+                    else
+                    return done(null,newUser);
+                })
+            }
+        })
+    }
+));
 
 //local login
 passport.use('local.login', new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true
-},function(req,username, password, done) {
+},async function(req,username, password, done) {
     //hàm check có lỗi khi input username hoặc password
     const validate =  validations => {
         return async (req, res, next) => {
@@ -26,7 +59,7 @@ passport.use('local.login', new LocalStrategy({
     };
 
     validate([
-        check('username').not().isEmpty().custom(function(value){
+        check('username').not().isEmpty().isLength({min: 5, max: 30}).custom(function(value){
         //kiểm tra username có là email hoặc mssv hay ko, nếu sai => throw error, ngừng check database
         const emailRegex = /\S+@\S+\.\S+/i;
         const studentIDRegex = /([0-9]){8}/i;

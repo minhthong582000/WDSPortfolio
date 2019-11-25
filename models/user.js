@@ -3,42 +3,33 @@ mongoose.set('useCreateIndex', true);
 const bcrypt = require('bcryptjs');
 
 const userSchema = mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true
+    local: {
+        email: {
+            type: String,
+            unique: true
+        },
+        pwd: String,
+        birthday: Date,
+        university: String,
+        studentID: {
+            type: String,
+            unique: true
+        },
+        role: {
+            type: String,
+            enum: ['member','admin','guest'],
+            default: 'guest'
+        },
+        projects: Array,
+        activities: Array,
+        skills: Array
     },
-    pwd: {
-        type: String,
-        required: true
+    facebook: {
+        id: String,
+        token: String,
+        email: String,
     },
-    birthday: Date,
-    university: {
-        type: String,
-        required: true
-    },
-    studentID: {
-        type: String,
-        require: true,
-        unique: true
-    },
-    role: {
-        type: String,
-        enum: ['member','admin','guest'],
-        default: 'guest'
-    },
-    projects: {
-        type: Array
-    },
-    activities: {
-        type: Array
-    },
-    skills: {
-        type: Array
-    }
-},
-{
-    timestamps: true
+    timestamps: Date
 });
 
 userSchema.methods.encryptPassword = function(password) {
