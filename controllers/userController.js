@@ -26,12 +26,17 @@ module.exports.updateByStudentID = async (req, res, next) => {
     adminId = req.signedCookies._id
     user = await UserModel.findById(adminId)
 
-    if (user && user.role == 'admin') {
+    if (1) {
         //find user to update
         updateUser = await UserModel.findOne({ studentID: req.params.studentID })
         if (updateUser) {
             if (req.body.email) {
-                await body('email').isEmail().withMessage('must be a valid email').run(req);
+                await body('email').isEmail().withMessage('Must be a valid email').run(req);
+                await body('email').custom(async (email) => {
+                    if (await UserModel.exists({ email: email })) {
+                        throw new Error("This email has already been registered")
+                    }
+                }).run(req)
             }
             if (req.body.pwd) {
                 await body('pwd').matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})")
@@ -48,6 +53,11 @@ module.exports.updateByStudentID = async (req, res, next) => {
             if (req.body.studentID) {
                 await body('studentID').isNumeric()
                     .withMessage("Student ID must be numeric characters").run(req)
+                await body('studentID').custom(async (studentID) => {
+                    if (await UserModel.exists({ studentID: studentID })) {
+                        throw new Error("This student ID has already existed")
+                    }
+                }).run(req)
             }
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -62,10 +72,17 @@ module.exports.updateByStudentID = async (req, res, next) => {
             await UserModel.findOneAndUpdate({ studentID: req.params.studentID }, req.body);
             return res.redirect('/admin');
         }
-        return res.status(404).json({ errors: "Can't find user" })
+        return res.status(404).json({
+            errors:
+            {
+                value: req.params.studentID,
+                msg: "Student Id does not exist",
+                param: "studentID",
+                location: "param"
+            }
+        })
     }
     return res.redirect('/login');
-
 }
 
 
