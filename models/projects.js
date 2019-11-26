@@ -20,8 +20,8 @@ const projectsSchema = mongoose.Schema({
         type: String
     }
 },
-{
-    timestamps: true
-});
+    {
+        timestamps: true
+    });
 
 module.exports = mongoose.model('projects', projectsSchema);
