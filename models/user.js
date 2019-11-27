@@ -27,6 +27,9 @@ const userSchema = mongoose.Schema({
         enum: ['member','admin','guest'],
         default: 'guest'
     },
+    avatarURL: {
+        type: "String"
+    },
     projects: {
         type: Array
     },

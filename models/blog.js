@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
+
 const blog = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     title: {
@@ -18,7 +19,7 @@ const blog = mongoose.Schema({
     },
     Auth : {
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'user'
+        ref: 'users'
     },
     censorship :{
         type : Boolean,
@@ -27,7 +28,7 @@ const blog = mongoose.Schema({
     comment : [{
         UserComment : {
             type : mongoose.Schema.Types.ObjectId,
-            ref : "user"
+            ref : "users"
         },
         contentComment : String
     }]
