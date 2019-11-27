@@ -58,16 +58,14 @@ app.use('/blog', blogRouter);
 
 const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
 mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
-    if (err) {
-        console.log('cant connect to db');
-        console.log(err)
-    }
-    else console.log('connected to db');
+    if (err) 
+        console.log(err);
+    console.log('Connected to database');
 });
 
 //REDIRECT WRONG URL.
 app.get('/warning/error', (req, res) => {
-    res.send('something wrong!');
+    res.status(400).send('Something wrong!');
 });
 app.all('*', function (req, res) {
     res.redirect('/warning/error');

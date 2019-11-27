@@ -22,14 +22,16 @@ const userSchema = mongoose.Schema({
         },
         projects: Array,
         activities: Array,
-        skills: Array
+        skills: Array,
     },
     facebook: {
         id: String,
         token: String,
         email: String,
-    },
-    timestamps: Date
+    }
+},
+{
+    timestamps: true
 });
 
 userSchema.methods.encryptPassword = function(password) {
