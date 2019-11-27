@@ -26,7 +26,7 @@ module.exports.updateByStudentID = async (req, res, next) => {
     adminId = req.signedCookies._id
     user = await UserModel.findById(adminId)
 
-    if (1) {
+    if (user && user.role == 'admin') {
         //find user to update
         updateUser = await UserModel.findOne({ studentID: req.params.studentID })
         if (updateUser) {
@@ -86,20 +86,20 @@ module.exports.updateByStudentID = async (req, res, next) => {
 }
 
 
-module.exports.create = async (req, res, next) => {
-    try {
-        new_user = new UserModel({
-            email: req.body.email,
-            pwd: password.hashPwd(req.body.pwd),
-            university: req.body.university,
-            studentID: req.body.studentID,
-        })
-    } catch (error) {
-        return next(error);
-    }
-    await new_user.save();
-    return res.redirect('/admin');
-}
+// module.exports.create = async (req, res, next) => {
+//     try {
+//         new_user = new UserModel({
+//             email: req.body.email,
+//             pwd: password.hashPwd(req.body.pwd),
+//             university: req.body.university,
+//             studentID: req.body.studentID,
+//         })
+//     } catch (error) {
+//         return next(error);
+//     }
+//     await new_user.save();
+//     return res.redirect('/admin');
+// }
 
 module.exports.index = async (req, res, next) => {
     const users = await UserModel.find();
