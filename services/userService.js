@@ -38,8 +38,7 @@ module.exports.updateByID = async function(updateDoc) {
     let { id, ...userDTO } = updateDoc;
     try {
         await userModel.findByIdAndUpdate(id, userDTO)
-    }
-    catch (err) {
+    } catch (err) {
         return false;
         // console.log('email is not exist')
     }
