@@ -27,6 +27,10 @@ const userSchema = mongoose.Schema({
         enum: ['member','admin','guest'],
         default: 'guest'
     },
+    avatarURL: {
+        type: "String",
+        default: "example.com/avatar.png"
+    },
     projects: {
         type: Array
     },

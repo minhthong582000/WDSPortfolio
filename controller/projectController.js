@@ -1,4 +1,4 @@
-var projectServices = require ('../services/projectServices');
+var projectServices = require ('../services/projectService');
 
 module.exports.info = async function(req,res,next){
     try {
