@@ -4,7 +4,7 @@ const router = express.Router();
 
 //local-login
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+  res.send('respond page login');
   next();
 });
 

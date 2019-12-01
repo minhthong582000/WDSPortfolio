@@ -10,8 +10,9 @@ passport.use('facebook',new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
     callbackURL: "http://localhost:3000/login/auth/facebook/callback",
-    profileFields: ['emails']
+    profileFields: ['emails', 'picture.type(large)', 'link']
   },async function(accessToken, refreshToken, profile, done) {
+      const picture = "https://graph.facebook.com/" + profile.id + "/picture?width=200&height=200&access_token=" + accessToken; //avatar fb của user khi login = fb
         DataUsers.findOne({'facebook.id': profile.id},function(err,user){
             if(err){
                 return done(err);
