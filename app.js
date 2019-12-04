@@ -8,7 +8,9 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const session = require('express-session');
+
 const bodyParser = require('body-parser');
+
 require('dotenv/config');
 require('./config/passport');
 
@@ -60,18 +62,17 @@ app.use('/users', usersRouter);
 app.use('/admin', adminRouter);
 app.use('/blog', blogRouter);
 
+
 const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
 mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
-    if (err) {
-        console.log('cant connect to db');
-        console.log(err)
-    }
-    else console.log('connected to db');
+    if (err) 
+        console.log(err);
+    console.log('Connected to database');
 });
 
 //REDIRECT WRONG URL.
 app.get('/warning/error', (req, res) => {
-    res.send('something wrong!');
+    res.status(400).send('Something wrong!');
 });
 // app.all('*', function (req, res) {
 //     res.redirect('/warning/error');
