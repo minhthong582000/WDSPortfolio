@@ -7,12 +7,21 @@ const projectsSchema = mongoose.Schema({
         required: true,
         unique: true
     },
+    startDate : {
+        type : Date,
+        default : Date.now
+    },
+    finishDate : {
+        type : Date,
+        default : Date.now,
+    },
+    status : Boolean,
     description: {
         type: String
     }
 },
-{
-    timestamps: true
-});
+    {
+        timestamps: true
+    });
 
 module.exports = mongoose.model('projects', projectsSchema);
