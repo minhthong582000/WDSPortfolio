@@ -6,7 +6,6 @@ const user = require('./user');
 /** 
  * Comment/ Reply Schema & Model
  * _parentID:   as reply is the comment of comment, this ID could be blogID or commentID
- * auth:        the EMAIL of the author
  */
 const commentSchema = new mongoose.Schema({
     _id : mongoose.Schema.Types.ObjectId,
@@ -18,24 +17,20 @@ const commentSchema = new mongoose.Schema({
     },
 
     auth : {
-        type: string,
+        type: String,
         ref: 'user'
     },
 
-    content : string
+    content : String
 })
 const commentModel = mongoose.model('commentModel', commentSchema);
 
 
 /**
  * Blog Schema & Model 
- * auth:    the EMAIL of the author
  * censorship:      
  */
 const blogSchema = new mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
-
-
     title: {
         require: true,
 
@@ -77,15 +72,22 @@ const blogSchema = new mongoose.Schema({
     },
 
     
-    comments : {
-        type: Array
-    }
+    comments : [{
+        UserComment : {
+            type : mongoose.Schema.Types.ObjectId,
+
+            ref : "user"
+        },
+
+        content : String,
+
+        reply : {
+            type : mongoose.Schema.Types.ObjectId,
+            
+            content : String
+        }
+    }]
 })
 
 
-const blogModel = mongoose.model('blogModel', blogSchema);
-
-module.exports = {
-    blogModel : blogModel,
-    commentModel : commentModel
-}
+module.exports = mongoose.model('blogModel', blogSchema);

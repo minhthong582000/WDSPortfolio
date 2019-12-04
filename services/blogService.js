@@ -4,7 +4,7 @@ const blogModel = require('../models/blog')
 
 
 const createBlog = async function (newBlogParam) {
-    const newBlog = new blogModel({ ...newBlogParam });
+    const newBlog = new blogModel(newBlogParam);
     await newBlog.save();
 }
 
@@ -38,27 +38,20 @@ const passCensorshipBlogByID = async function(_id ){
 
 /**
  * add a comment to a blog
- * @param {mongoose.Schema.Type.ObjectID} _blogID           id of the blog
- * @param {mongoose.Schema.Type.ObjectID} _idUserCommnent   email of the user
- * @param {string} content                                  content of the comment
+ * @param {mongoose.Schema.Type.ObjectID} _blogID   id 
+ * @param {mongoose.Schema.Type.ObjectID} _idUserCommnent 
+ * @param {string} content 
  */
 const commmentBlogByID = async function(_blogID, _idUserCommnent, content){
-    await blogmodel.findById(_blogID, function(BlogCrr){
-        BlogCrr.comment.push(new blogModel.commentModel())
-    })
-}
-
-
-/**
- * Reply comment by ID
- */
-const replyCommentByID = async function(_commentID, _idUserReply, content){
-    await commnent.findById(_commentID, function(BlogCrr){
-        BlogCrr.commnent.add({
-            _idUserReply,
-            content
-        });
-    })
+    // await blogmodel.findById(_blogID, function(BlogCrr){
+    //     BlogCrr.comment.add({
+    //         _blogID,
+    //         _idUserCommnent,
+    //         content
+    //     });
+    //     console.log(BlogCrr.comment);
+    // })
+    console.log('commentBlogByID');
 }
 
 
