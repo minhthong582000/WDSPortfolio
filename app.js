@@ -8,7 +8,9 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const session = require('express-session');
+
 const bodyParser = require('body-parser');
+
 require('dotenv/config');
 require('./config/passport');
 
@@ -54,6 +56,7 @@ app.use('/projects', projectsRouter);
 app.use('/users', usersRouter);
 app.use('/admin', adminRouter);
 app.use('/blog', blogRouter);
+
 
 const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
 mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
