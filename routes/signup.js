@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 const passport = require("passport");
-const account = require('../controller/userController')
 //normal callback
 // router.post('/', passport.authenticate('local-signup', { session: false }),
 //     function (req, res, next) {
@@ -9,9 +8,9 @@ const account = require('../controller/userController')
 //         next()
 //     });
 // for custom callback
-router.post('/', function (req, res, next) {
+router.post('/local', function (req, res, next) {
     if (req.body.email && req.body.pwd) {
-        passport.authenticate('local-signup', function (err, user, info) {
+        passport.authenticate('local', function (err, user, info) {
             if (err) return next(err)
             if (info)
                 res.status(info.statusCode).send(info);

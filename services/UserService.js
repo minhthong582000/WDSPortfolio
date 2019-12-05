@@ -1,9 +1,11 @@
 const usermodel = require('../models/user')
-const createUser = async function (userDTO,done) {
+const createUser = async function (userDTO, done) {
     let newUser = new usermodel({ ...userDTO })
-    newUser.pwd = await newUser.encryptPassword(newUser.pwd)
+    if (newUser.pwd) {
+        newUser.pwd = await newUser.encryptPassword(newUser.pwd)
+    }
     await newUser.save(function (err) {
-        if (err)
+        if (err)    
             throw err;
     });
     return newUser;
@@ -11,42 +13,31 @@ const createUser = async function (userDTO,done) {
 
 const isUserExist = async function (email, studentID) {
     try {
-        let thisemailUser = await usermodel.findOne({ 'email': email })
-        let thisstudentIDUser = await usermodel.findOne({ 'studentID': studentID })
-        if (thisemailUser || thisstudentIDUser) {
+        let oldemail = await usermodel.findOne({ 'email': email })
+        let oldSID = await usermodel.findOne({ 'studentID': studentID })
+        if (oldemail || oldSID) {
             return true;
         }
         else return false;
     }
     catch (err) {
         return false;
-        // console.log('email is not exist')
     }
 }
-//chưa dùng tới
-// const removeUserByFindOne = async function (email) {
-//     return await usermodel.findByIdAndDelete(email);
-// }
-// const replaceEmail = async function (userDTO, replaceDTO) {
-//     let useremail = userDTO.email;
-//     let replaceUserEmail = replaceDTO.replaceEmail
-//     try {
-//         await Post.findOneAndUpdate(useremail, replaceUserEmail);
-//     } catch (err) {
-//         // console.log('something went wrong when replace email')
-//     }
-// }
-// const updateByID = async function (updateDoc) {
-//     let { id, ...userDTO } = updateDoc;
-//     try {
-//         await usermodel.findByIdAndUpdate(id, userDTO)
-//     }
-//     catch (err) {
-//         return false;
-//         // console.log('email is not exist')
-//     }
-// }
+const isGGUserExist = async function (googleid) {
+    try {
+        let oldgguser = await usermodel.findOne({ googleid: googleid });
+        if (oldgguser) {
+            return oldgguser;
+        }
+        else return false;
+    }
+    catch (err) {
+        return false;
+    }
+}
 module.exports = {
     createUser,
-    isUserExist
+    isUserExist,
+    isGGUserExist
 }

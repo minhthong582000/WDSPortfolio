@@ -5,21 +5,21 @@ const bcrypt = require('bcryptjs');
 const userSchema = mongoose.Schema({
     email: {
         type: String,
-        required: true,
+        unique: true
+    },
+    googleid:{
+        type: String,
         unique: true
     },
     pwd: {
         type: String,
-        required: true
     },
     birthday: Date,
     university: {
         type: String,
-        required: true
     },
     studentID: {
         type: String,
-        require: true,
         unique: true
     },
     role: {
