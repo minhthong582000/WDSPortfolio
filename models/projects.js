@@ -18,7 +18,8 @@ const projectsSchema = mongoose.Schema({
     status : Boolean,
     description: {
         type: String
-    }
+    }, 
+    images : String
 },
     {
         timestamps: true
