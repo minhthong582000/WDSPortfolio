@@ -1,12 +1,5 @@
 var projectModel = require('../models/projects');
 
-const _module = {
-    getStorageAccountName: () => {
-        const matches = /AccountName=(.*?);/.exec(process.env.AZURE_STORAGE_CONNECTION_STRING);
-        return matches[1];
-    }
-};
-
 module.exports.findByProjectId = async function (projectId){
     let project = await projectModel.find({_id : projectId});
     return project;

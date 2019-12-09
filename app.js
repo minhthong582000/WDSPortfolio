@@ -56,6 +56,7 @@ app.use('/users', usersRouter);
 app.use('/admin', adminRouter);
 app.use('/blog', blogRouter);
 
+
 const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
 mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
     if (err) 
@@ -84,7 +85,6 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    // res.render('error');
 });
 
 module.exports = app;

@@ -7,10 +7,20 @@ const activitiesSchema = mongoose.Schema({
         required: true,
         unique: true
     },
-    startDate: Date,
-    endDate: Date,
+    startDate: {
+        type: Date,
+        default: new Date()
+    },
+    endDate: {
+        type: Date,
+        default: new Date()
+    },
     description: {
-        type: String
+        type: String,
+        required: true
+    },
+    images: {
+        type: Array
     }
 },
 {
