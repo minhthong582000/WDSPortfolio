@@ -1,23 +1,19 @@
 const passport = require('passport');
 const express = require('express');
 const router = express.Router();
+const { validate, keyValidate } = require('../middleware/checkPermission');
 
 //local-login
 router.get('/', function(req, res, next) {
-  res.send('respond page login');
+  var messages = req.flash("error");
+  res.render("index", { messages });
   next();
 });
 
-router.post('/', passport.authenticate("local.login", {
+router.post('/',validate(keyValidate), passport.authenticate("local.login", {
   successRedirect: '/',
   failureRedirect: '/login',
-}));
-
-//login with facebook
-router.get('/auth/facebook',passport.authenticate('facebook',{ scope : ['email'] }));
-router.get('/auth/facebook/callback',passport.authenticate('facebook', { 
-  successRedirect: '/',
-  failureRedirect: '/login'
+  failureFlash: true
 }));
 
 
