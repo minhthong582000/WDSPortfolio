@@ -13,7 +13,6 @@ router.route('/:id')
 .post(controller.postEditActivity) //Chỉnh sửa thông tin
 .delete(controller.getDeleteActivity) 
 
-
 //Thao tác hình ảnh của từng hoạt động
 router.route('/:id/img') //Thêm
 .post(controller.postAddImgForActivity)

@@ -17,10 +17,10 @@ const activitiesSchema = mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
+        required: true
     },
     images: {
-        type: Array,
+        type: Array
     }
 },
 {
