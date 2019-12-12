@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
-const userController = require('../controllers/userController')
+const userController = require('../controller/userController')
 
 /* GET users listing. */
 router.get('/', userController.index);
 
-router.post('/create', userController.create);
+//router.post('/create', userController.create);
 
 router.post('/update/:studentID', userController.updateByStudentID)
 
