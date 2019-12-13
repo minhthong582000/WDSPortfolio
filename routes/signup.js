@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const passport = require("passport");
+<<<<<<< HEAD
 //normal callback
 // router.post('/', passport.authenticate('local-signup', { session: false }),
 //     function (req, res, next) {
@@ -20,5 +21,7 @@ router.post('/local', function (req, res, next) {
         res.status(401).send({ statusCode: 401, status: 'unauthorized', msg: ['email or password is empty'] })
     }
 });
+=======
+>>>>>>> a950f3e0d92fbd1b08e5b6c70c02640c1dd579b1
 
 module.exports = router;
