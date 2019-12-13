@@ -14,13 +14,11 @@ const userSchema = mongoose.Schema({
     },
     birthday: Date,
     university: {
-        type: String,
-        required: true
+        type: String
     },
     studentID: {
-        type: String,
-        require: true,
-        unique: true
+        type: String
+        //unique: true
     },
     role: {
         type: String,
@@ -46,10 +44,10 @@ const userSchema = mongoose.Schema({
 });
 
 userSchema.methods.encryptPassword = function(password) {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
+    return bcrypt.hash(password, bcrypt.genSaltSync(10), null);
 };
 userSchema.methods.validPassword = function(password) {
-    return bcrypt.compareSync(password, this.pwd);
+    return bcrypt.compare(password, this.pwd);
 };
 module.exports = mongoose.model('users', userSchema);
 

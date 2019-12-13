@@ -1,5 +1,6 @@
 const UserModel = require('../models/user');
 const password = require('../services/password');
+const userService = require('../services/userService');
 const { body, validationResult } = require('express-validator');
 
 module.exports.deleteByStudentID = async (req, res, next) => {
@@ -67,22 +68,28 @@ module.exports.updateByStudentID = async (req, res, next) => {
     })
 }
 
-// module.exports.create = async (req, res, next) => {
-//     try {
-//         new_user = new UserModel({
-//             email: req.body.email,
-//             pwd: password.hashPwd(req.body.pwd),
-//             university: req.body.university,
-//             studentID: req.body.studentID,
-//         })
-//     } catch (error) {
-//         return next(error);
-//     }
-//     await new_user.save();
-//     return res.redirect('/admin');
-// }
+module.exports.create = async (req, res, next) => {
+    try {
+        new_user = new UserModel({
+            email: req.body.email,
+            pwd: password.hashPwd(req.body.pwd),
+            university: req.body.university,
+            studentID: req.body.studentID,
+        })
+    } catch (error) {
+        return next(error);
+    }
+    await new_user.save();
+    return res.redirect('/admin');
+}
 
 module.exports.index = async (req, res, next) => {
     const users = await UserModel.find();
     return res.json(users)
 };
+
+module.exports.setAvatarURL = function (req, res, next) {
+    let url = req.body.avatarURL;
+    let userID = req.user;
+    userService.setImgURL(url, userID);
+}

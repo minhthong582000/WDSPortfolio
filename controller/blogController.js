@@ -1,5 +1,5 @@
 const loginService = require('../services/loginService')
-async function createNewAcount(req, res, next) {
+async function createNewAccount(req, res, next) {
     try {
         const DTO = req.body;
         // if (!(await checkUserExist(DTO.email)))
@@ -15,4 +15,4 @@ async function createNewAcount(req, res, next) {
     res.json({ Status: 'Successfully' });
     next();
 }
-module.exports = { createNewAcount }
+module.exports = { createNewAccount }

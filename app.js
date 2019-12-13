@@ -7,7 +7,7 @@ const flash = require('connect-flash');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const session = require('express-session');
+//const session = require('express-session');
 
 const bodyParser = require('body-parser');
 
@@ -26,20 +26,20 @@ const blogRouter = require('./routes/blog');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({
-    name: "passport",
-    proxy: true,
-    secret: process.env.TOKEN_SECRET || "thongdz",
-    resave: true,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 30 * 24 * 60 * 60 * 1000 //30 days
-    }
-}));
+// app.use(session({
+//     name: "passport",
+//     proxy: true,
+//     secret: process.env.TOKEN_SECRET || "thongdz",
+//     resave: true,
+//     saveUninitialized: false,
+//     cookie: {
+//         maxAge: 30 * 24 * 60 * 60 * 1000 //30 days
+//     }
+// }));
 
-app.use(flash());
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(flash());
+// app.use(passport.initialize());
+// app.use(passport.session());
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
 app.use(logger('dev'));
