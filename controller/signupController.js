@@ -17,13 +17,12 @@ module.exports.createNewAccount = async function (req, email, pass, done) {
         let user = await userService.userExist(DTO.email, DTO.studentID);
         if (user) {
             return done(null, false, { statusCode: 401, status: 'unauthorized', msg: ['Your email or studentID already existed'] });
-        } else {
-            let newUser = await userService.createUser(DTO);
-            if (newUser) {
-                return done(null, newUser, { statusCode: 200, status: 'authorized' });
-            }
-            else return done(null, false, { statusCode: 401, status: 'unauthorized', msg: ['Unable to create your account'] });
         }
+        let newUser = await userService.createUser(DTO);
+        if (newUser) {
+            return done(null, newUser, { statusCode: 200, status: 'authorized' });
+        }
+        else return done(null, false, { statusCode: 401, status: 'unauthorized', msg: ['Unable to create your account'] });
     }
 };
 
