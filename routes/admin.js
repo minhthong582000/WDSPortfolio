@@ -5,7 +5,7 @@ const userController = require('../controller/userController')
 /* GET users listing. */
 router.get('/', userController.index);
 
-//router.post('/create', userController.create);
+router.post('/create/:studentID', userController.createByStudentID)
 
 router.post('/update/:studentID', userController.updateByStudentID)
 

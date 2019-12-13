@@ -1,12 +1,58 @@
 const UserModel = require('../models/user');
+const ProjectModel = require('../models/projects')
+const ActivityModel = require('../models/activities')
 const password = require('../services/password');
 const { body, validationResult } = require('express-validator');
 
+module.exports.createByStudentID = async (req, res, next) => {
+    const studentID = req.params.studentID
+    var user = await UserModel.findOne({ studentID: studentID })
+    if (user) {
+        try {
+            if (req.body.activity) {
+                newActivity = await ActivityModel.findById(req.body.activity);
+                await user.activities.push(newActivity);
+                console.log(req.body.activity)
+            }
+            if (req.body.project) {
+                newProject = await ProjectModel.findById(req.body.project);
+                await user.projects.push(newProject)
+            }
+            await user.save()
+        } catch (error) {
+            next(error)
+        }
+    }
+    return res.redirect('/admin');
+}
+
+
 module.exports.deleteByStudentID = async (req, res, next) => {
     //find and delete
-    user = await UserModel.findById(adminId)
     const studentID = req.params.studentID
-    await UserModel.findOneAndDelete({ studentID: studentID })
+    user = await UserModel.findOne({ studentID: studentID })
+    if (user) {
+        try {
+            if (req.body.project) {
+                const deletedProject = await user.projects.find(
+                    (project) => project._id == req.body.project);
+                await user.projects.pull(deletedProject)
+            }
+            if (req.body.activity) {
+                const deletedActivity = await user.activities.find(
+                    (activity) => activity._id == req.body.activity
+                );
+                await user.activities.pull(deletedActivity)
+            }
+            if (req.body.avatarURL) {
+                user.avatarURL = UserModel.schema.path("avatarURL").defaultValue
+            }
+            await user.save()
+        }
+        catch (error) {
+            next(error)
+        }
+    }
     return res.redirect('/admin');
 }
 
