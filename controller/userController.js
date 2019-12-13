@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const userService = require('../services/userService')
 const Joi = require('@hapi/joi');
 const signUpSchema = Joi.object({
@@ -26,24 +25,23 @@ async function createNewAcountLocal(req, email, pass, done) {
         else return done(null, false, { statusCode: 401, status: 'unauthorized', msg: ['Save user fail'] });
     }
 };
-async function googleLogin(accessToken, refreshToken, profile, done) {
-    let user = await userService.isGGUserExist(profile.id);
-    let email = profile.emails[0].value;
-    if (user) {
-        return done(null, user);
-    } else {
-        let newUser = await userService.createUser({ email: email, googleid: profile.id });
-        if (newUser) {
-            return done(null, newUser);
-        }
-        else return done(null, false);
-    }
-}
+// async function googleLogin(accessToken, refreshToken, profile, done) {
+//     let user = await userService.isGGUserExist(profile.id);
+//     let email = profile.emails[0].value;
+//     if (user) {
+//         return done(null, user);
+//     } else {
+//         let newUser = await userService.createUser({ email: email, googleid: profile.id });
+//         if (newUser) {
+//             return done(null, newUser);
+//         }
+//         else return done(null, false);
+//     }
+// }
 module.exports = {
     createNewAcountLocal,
     googleLogin
 }
-=======
 const UserModel = require('../models/user');
 const password = require('../services/password');
 const { body, validationResult } = require('express-validator');
@@ -132,4 +130,3 @@ module.exports.index = async (req, res, next) => {
     const users = await UserModel.find();
     return res.json(users)
 };
->>>>>>> a950f3e0d92fbd1b08e5b6c70c02640c1dd579b1
