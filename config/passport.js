@@ -17,8 +17,8 @@ passport.use('local', new LocalStrategy({
     passReqToCallback: true,
 }, userController.createNewAcountLocal));
 
-passport.use('google', new GoogleStrategy({
-    clientID: "455966369589-laui062rb2luc229f84o78rb2opbk31v.apps.googleusercontent.com",
-    clientSecret: "mJDgzK17QB8o502KJ3_gltPe",
-    callbackURL: "/login/auth/google/callback"
-}, userController.googleLogin));
+// passport.use('google', new GoogleStrategy({
+//     clientID: "455966369589-laui062rb2luc229f84o78rb2opbk31v.apps.googleusercontent.com",
+//     clientSecret: "mJDgzK17QB8o502KJ3_gltPe",
+//     callbackURL: "/login/auth/google/callback"
+// }, userController.googleLogin));
