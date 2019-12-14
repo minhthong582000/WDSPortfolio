@@ -3,29 +3,6 @@ mongoose.set('useCreateIndex', true);
 const user = require('./user');
 
 
-/** 
- * Comment/ Reply Schema & Model
- * _parentID:   as reply is the comment of comment, this ID could be blogID or commentID
- */
-const commentSchema = new mongoose.Schema({
-    _id : mongoose.Schema.Types.ObjectId,
-
-    _parentID : {
-        type:   mongoose.Schema.Types.ObjectId,
-
-        ref:    'blog'
-    },
-
-    auth : {
-        type: String,
-        ref: 'user'
-    },
-
-    content : String
-})
-const commentModel = mongoose.model('commentModel', commentSchema);
-
-
 /**
  * Blog Schema & Model 
  * censorship:      
@@ -40,12 +17,12 @@ const blogSchema = new mongoose.Schema({
     },
 
 
-    content: {
+    body: {
         require : true,
 
         type: String,
 
-        default : "Content default"
+        default : "Default content."
     },
 
 
@@ -72,22 +49,45 @@ const blogSchema = new mongoose.Schema({
     },
 
     
-    comments : [{
-        UserComment : {
-            type : mongoose.Schema.Types.ObjectId,
+    comments : String,  // todo
 
-            ref : "user"
-        },
 
-        content : String,
+    customURL : {
+        require: true,
 
-        reply : {
-            type : mongoose.Schema.Types.ObjectId,
-            
-            content : String
-        }
-    }]
+        type: String, // todo
+
+        default: "default-URL"
+    },
+
+
+    tags: {
+        type: [String],
+        
+        index: true
+    }
 })
 
+// Validate the custom URL before saving.
+blogSchema.set('validateBeforeSave', true);
+
+blogSchema.path('customURL').validate(function (value) {
+    return value != null;
+});
+
+
+blogSchema.methods.getTitle = function(){
+    return this.title;
+}
+
+
+blogSchema.methods.getID = function(){
+    return this.id;
+}
+
+
+blogSchema.methods.getURL = function(){
+    return this.customURL;
+}
 
 module.exports = mongoose.model('blogModel', blogSchema);
