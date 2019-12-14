@@ -7,12 +7,21 @@
     {
         "type": "node",
         "request": "attach",
-        "name": "Attach",
-        "port": 9229,
+        "name": "Attach by Process",
+        "processId": "${command:PickProcess}",
         "skipFiles": [
             "<node_internals>/**"
         ]
     },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Node",
+            "program": "${workspaceFolder}/bin/www",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
         {
             "type": "chrome",
             "request": "launch",

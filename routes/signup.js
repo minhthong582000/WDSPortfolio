@@ -11,7 +11,6 @@ router.post('/', (req, res, next)=>{
                 req.login(user, { session: false }, (err) => {
                     if (err) 
                         res.send(err);
-                    user.pwd = null;
                     // generate a signed json web token with the contents of user object and return it
                     const token = jwt.sign({ user }, process.env.JWTSECRET || 'thongdz');
                     return res.json({user, "token": token});
