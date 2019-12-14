@@ -1,24 +1,24 @@
-const UserModel = require('../models/user');
+const userModel = require('../models/user');
 const password = require('../services/password');
 const userService = require('../services/userService');
 const { body, validationResult } = require('express-validator');
 
 module.exports.deleteByStudentID = async (req, res, next) => {
     //find and delete
-    user = await UserModel.findById(adminId)
+    user = await userModel.findById(adminId)
     const studentID = req.params.studentID
-    await UserModel.findOneAndDelete({ studentID: studentID })
+    await userModel.findOneAndDelete({ studentID: studentID })
     return res.redirect('/admin');
 }
 
 module.exports.updateByStudentID = async (req, res, next) => {
     //find user to update
-    updateUser = await UserModel.findOne({ studentID: req.params.studentID })
+    updateUser = await userModel.findOne({ studentID: req.params.studentID })
     if (updateUser) {
         if (req.body.email) {
             await body('email').isEmail().withMessage('Must be a valid email').run(req);
             await body('email').custom(async (email) => {
-                if (await UserModel.exists({ email: email })) {
+                if (await userModel.exists({ email: email })) {
                     throw new Error("This email has already been registered")
                 }
             }).run(req)
@@ -31,7 +31,7 @@ module.exports.updateByStudentID = async (req, res, next) => {
             await body('university').isAlphanumeric().withMessage("University must be string").run(req)
         }
         if (req.body.role) {
-            await body('role').isIn(UserModel.schema.path('role').enumValues)
+            await body('role').isIn(userModel.schema.path('role').enumValues)
                 .withMessage("Role must be Guest, member or admin").run(req)
         }
 
@@ -39,7 +39,7 @@ module.exports.updateByStudentID = async (req, res, next) => {
             await body('studentID').isNumeric()
                 .withMessage("Student ID must be numeric characters").run(req)
             await body('studentID').custom(async (studentID) => {
-                if (await UserModel.exists({ studentID: studentID })) {
+                if (await userModel.exists({ studentID: studentID })) {
                     throw new Error("This student ID has already existed")
                 }
             }).run(req)
@@ -54,7 +54,7 @@ module.exports.updateByStudentID = async (req, res, next) => {
             req.body.pwd = password.hashPwd(req.body.pwd);
         }
 
-        await UserModel.findOneAndUpdate({ studentID: req.params.studentID }, req.body);
+        await userModel.findOneAndUpdate({ studentID: req.params.studentID }, req.body);
         return res.redirect('/admin');
     }
     return res.status(404).json({
@@ -70,7 +70,7 @@ module.exports.updateByStudentID = async (req, res, next) => {
 
 module.exports.create = async (req, res, next) => {
     try {
-        new_user = new UserModel({
+        new_user = new userModel({
             email: req.body.email,
             pwd: password.hashPwd(req.body.pwd),
             university: req.body.university,
@@ -80,16 +80,29 @@ module.exports.create = async (req, res, next) => {
         return next(error);
     }
     await new_user.save();
-    return res.redirect('/admin');
 }
 
 module.exports.index = async (req, res, next) => {
-    const users = await UserModel.find();
+    const users = await userModel.find();
     return res.json(users)
 };
 
 module.exports.setAvatarURL = function (req, res, next) {
     let url = req.body.avatarURL;
-    let userID = req.user;
+    let userID = req.body.userID;
     userService.setImgURL(url, userID);
-}
+};
+
+module.exports.setRole = async function (req, res, next) {
+    try {
+        let userID = req.body.id;
+        let userRole = req.body.role
+        let update = await userModel.findByIdAndUpdate(userID, {role: userRole}, { new: true }, (err, result)=>{
+            if(err) console.log(err);   
+            console.log(result);
+        })
+        return res.send(update?"update successful":false);
+    } catch(err) {
+        next(err);
+    }
+};

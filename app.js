@@ -39,7 +39,7 @@ app.use('/admin', adminRouter);
 app.use('/blog', blogRouter);
 
 
-const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
+const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false };
 mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
     if (err) 
         console.log(err);

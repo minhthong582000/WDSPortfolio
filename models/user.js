@@ -17,12 +17,12 @@ const userSchema = mongoose.Schema({
         type: String
     },
     studentID: {
-        type: String
-        //unique: true
+        type: String,
+        unique: true
     },
     role: {
-        type: String,
         enum: ['member','admin','guest'],
+        type: String,
         default: 'guest'
     },
     avatarURL: {
