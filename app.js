@@ -59,7 +59,7 @@ app.use('/blog', blogRouter);
 
 
 const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
-mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/wds', mongooseOption, (err) => {
+mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
     if (err) 
         console.log(err);
     console.log('Connected to database');
