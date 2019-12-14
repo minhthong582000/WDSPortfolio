@@ -14,10 +14,21 @@ router.get('/', function(req, res, next) {
 
 /* test create blog*/
 router.get('/createBlog', function(req, res, next) {
-  res.send('/createBlog');
+  res.send('Creating blog');
+
   newBlog = new blogModel({title: 'Nhân Lê'});
-  newBlogID = blogService.createBlog(newBlog);
-  console.log(newBlogID);
+  newBlogURL = blogService.createBlog(newBlog);
+
+  console.log(newBlogURL);
+});
+
+
+router.get('/:blogURL', function(req, res, next){ 
+  newBlog = new blogModel({title: 'Nhân Lê'});
+  newBlogURL = blogService.createBlog(newBlog);
+
+  const content = blogService.findBlogByURL(req.params.blogURL);
+  console.log(content);
 });
 
 

@@ -68,9 +68,11 @@ const blogSchema = new mongoose.Schema({
     }
 })
 
+
 // Validate the custom URL before saving.
 blogSchema.set('validateBeforeSave', true);
 
+// todo
 blogSchema.path('customURL').validate(function (value) {
     return value != null;
 });
@@ -82,7 +84,7 @@ blogSchema.methods.getTitle = function(){
 
 
 blogSchema.methods.getID = function(){
-    return this.id;
+    return this._id;
 }
 
 
