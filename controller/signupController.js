@@ -1,35 +1,23 @@
-const Joi = require('@hapi/joi');
-const userService = require('../services/userService');
+const passport = require("passport");
+const jwt = require('jsonwebtoken');
 
-module.exports.createUser = async function (req, email, pass, done) {
-    const signUpSchema = Joi.object({
-        email: Joi.string().email().required(),
-        pwd: Joi.string().min(3).max(30).pattern(/^[a-zA-Z0-9]{3,30}$/).required(),
-        birthday: Joi.number().integer().min(1900).max(2100),
-        university: Joi.string().required(),
-        studentID: Joi.string().required()
-    });
-    let DTO = req.body;
-    let valid = await signUpSchema.validate(DTO, { abortEarly: false });
-    if (valid.error) {
-        return done(null, false, { statusCode: 401, status: 'unauthorized', msg: await valid.error.details.map(err => err.message) });
-    } else {
-        let user = await userService.userExist(DTO.email, DTO.studentID);
-        if (user) {
-            return done(null, false, { statusCode: 401, status: 'unauthorized', msg: ['Your email or studentID already existed'] });
-        }
-        let newUser = await userService.createUser(DTO);
-        if (newUser) {
-            return done(null, newUser, { statusCode: 200, status: 'authorized' });
-        }
-        else return done(null, false, { statusCode: 401, status: 'unauthorized', msg: ['Unable to create your account'] });
+module.exports.passportLocal = (req, res, next)=>{
+    if (req.body.email && req.body.pwd) {
+        passport.authenticate('local-signup', {session: false } ,function (err, user, info) {
+            if (err) return next(err);
+            if(user)
+                req.login(user, { session: false }, (err) => {
+                    if (err) 
+                        res.send(err);
+                    // generate a signed json web token with the contents of user object and return it
+                    const token = jwt.sign({ user }, process.env.JWTSECRET || 'thongdz');
+                    return res.json({user, "token": token});
+                });
+            else 
+                res.status(info.statusCode).send(info.msg);
+        })(req, res, next);
     }
-};
-
-module.exports.checkToken = (payload, done)=>{
-    let user = userService.findById(payload.user._id);
-    if (!user) {
-        return done(null, false, { message: 'Incorrect username or password' });
-    };
-    return done(null, user);
-  }
+    else {
+        res.status(401).send({ statusCode: 401, status: 'unauthorized', msg: ['email or password is empty'] })
+    }
+}

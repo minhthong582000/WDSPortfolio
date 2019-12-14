@@ -14,6 +14,18 @@ module.exports.createUser = async function(userDTO) {
      }
 }
 
+module.exports.checkByID = async (_id)=>{
+    try {
+        let user = await userModel.findById(_id, (err)=>{
+            if (err) 
+                throw err;
+        });
+        return (user)? true : false;
+    } catch(err) {
+        console.log(err);
+    }
+}
+
 module.exports.userExist = async function(email, studentID) {
     try {
         let emailExist = await userModel.findOne({'email': email});
