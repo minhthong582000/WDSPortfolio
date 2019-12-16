@@ -58,9 +58,10 @@ app.use('/blog', blogRouter);
 const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
 mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
     if (err)
-        console.log('err');
-    console.log('connected to my database');
+        console.log('Error MongoDB');
+    console.log('Connected to my database');
 });
+
 
 //REDIRECT WRONG URL.
 app.get('/warning/error', (req, res) => {
@@ -69,6 +70,7 @@ app.get('/warning/error', (req, res) => {
 app.all('*', function (req, res) {
     res.redirect('/warning/error');
 });
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

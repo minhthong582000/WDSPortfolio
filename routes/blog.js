@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 const mongoose = require('mongoose');
-const blogModel = require('../models/blog');
+//const blogModel = require('../models/blog');
 const blogService = require('../services/blogService');
 const fs = require('fs');
+const app = require('../app');
 
 
 /* GET users listing. */
@@ -13,22 +14,22 @@ router.get('/', function(req, res, next) {
 
 
 /* test create blog*/
-router.get('/createBlog', function(req, res, next) {
-  res.send('Creating blog');
-
-  newBlog = new blogModel({title: 'Nhân Lê'});
-  newBlogURL = blogService.createBlog(newBlog);
-
-  console.log(newBlogURL);
+router.get('/new-blog', async function(req, res, next) {
+  newBlogURL = await blogService.createBlog('Blog mới nè', 'Body blog mới nè.', null, ['testTag', 'Tagtest']);
+  res.send(newBlogURL);
 });
 
 
-router.get('/:blogURL', function(req, res, next){ 
-  newBlog = new blogModel({title: 'Nhân Lê'});
-  newBlogURL = blogService.createBlog(newBlog);
+router.get('/reset', async function(req, res, next){ 
+  blogService.emptyDatabase();
+  res.end();
+});
 
-  const content = blogService.findBlogByURL(req.params.blogURL);
+
+router.get('/:blogURL', async function(req, res, next){ 
+  const content = await blogService.findBlogByURL(req.params.blogURL);
   console.log(content);
+  res.end();
 });
 
 

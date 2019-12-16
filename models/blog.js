@@ -3,9 +3,11 @@ mongoose.set('useCreateIndex', true);
 const user = require('./user');
 
 
+const MIN_TITLE_LENGTH = 1;
+const MAX_TITLE_LENGTH = 256;
+
 /**
  * Blog Schema & Model 
- * censorship:      
  */
 const blogSchema = new mongoose.Schema({
     title: {
@@ -13,7 +15,9 @@ const blogSchema = new mongoose.Schema({
 
         type: String,
 
-        unique: true
+        minlength: MIN_TITLE_LENGTH,
+
+        maxlength: MAX_TITLE_LENGTH
     },
 
 
@@ -49,15 +53,14 @@ const blogSchema = new mongoose.Schema({
     },
 
     
-    comments : String,  // todo
-
-
     customURL : {
         require: true,
 
         type: String, // todo
 
-        default: "default-URL"
+        default: "default-URL",
+
+        unique: true,
     },
 
 
