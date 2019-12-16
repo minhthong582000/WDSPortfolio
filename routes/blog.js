@@ -17,8 +17,9 @@ router.get('/', function(req, res, next) {
  * Create a new blog. Needs to change when merged with front-end.
  */
 router.get('/new-blog', async function(req, res, next) {
-  newBlogURL = await blogService.createBlog('Blog mới nè', 'Body blog mới nè.', null, ['testTag', 'Tagtest']);
-  res.send(newBlogURL);
+  await blogService.createBlog('Blog mới nè', 'Body blog mới nè.', null, ['testTag', 'Tagtest'], function(newBlogURL){
+    res.redirect(newBlogURL);
+  });
 });
 
 

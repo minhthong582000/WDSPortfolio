@@ -53,14 +53,14 @@ removeTone = function(str){
  * 
  * @returns {String}    The customURL of the blog.
  */
-const createBlog = async function (m_title, m_body, m_authID, m_tags) {
+const createBlog = async function (m_title, m_body, m_authID, m_tags, callback) {
     const newBlog = await new blogModel({title: m_title, body: m_body, auth: m_authID, customURL: removeTone(m_title)});
 
     const newBlogURL = removeTone(newBlog.get('title'));
     newBlog.set('customURL', newBlogURL);
     console.log('Creating new blog at /%s.', newBlog.get('customURL'));
 
-
+    // todo handle duplicated blog url
     try{
         await newBlog.$__save({}, function(err, res){
             if (err){
@@ -73,6 +73,8 @@ const createBlog = async function (m_title, m_body, m_authID, m_tags) {
     }catch(err){
         console.log(err.errmsg);
     }
+
+    callback(newBlogURL);
 }
 
 
