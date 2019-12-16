@@ -37,13 +37,14 @@ router.get('/reset', async function(req, res, next){
  * Removes a blog by its customURL.
  */
 router.get('/remove/:blogURL', async function(req, res, next){
-  const removingAction = await blogService.removeBlogByURL(req.params.blogURL);
+  const removingAction = await blogService.removeBlogByURL(req.params.blogURL, function(m_result){
+    if (m_result){
+      res.send('Removed a blog.');
+    }else{
+      res.send('Cannot remove blog.');
+    }
+  });
 
-  if (removingAction){
-    res.send('Removed a blog.');
-  }else{
-    res.send('Cannot remove blog.');
-  }
 
   res.end();
 })

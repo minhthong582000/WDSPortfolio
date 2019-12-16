@@ -5,6 +5,10 @@
  */
 
 
+ const EXTEND_LINK_LENGHT = 5;
+ const HASH_KEY = 53;
+
+
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 /**
@@ -16,6 +20,24 @@ mongoose.set('useFindAndModify', false);
 
 const blogModel = require('../models/blog');
 const user = require('../models/user');
+
+
+/**
+ * Hash the id of the blog so that no url is duplicated.
+ * See https://cp-algorithms.com/string/string-hashing.html
+ * @param {String} m_ID The ID string that needs to hash.
+ * 
+ * @returns {number}    The hashed number.
+ */
+const idHash = function(m_ID){
+    var hashValue = 0;
+
+    for (var i = 0; i < m_ID.length; i++){
+        hashValue += (Math.pow(m_ID[i].charCodeAt(0), i) * Math.pow(HASH_KEY, m_ID.length - i)) % (Math.pow(10, 9) + 9); 
+    }
+
+    return hashValue;
+}
 
 
 /**
@@ -50,17 +72,21 @@ removeTone = function(str){
  * @param {String}                          m_body The body of the blog article (with tags).
  * @param {mongoose.Schema.Types.ObjectId}  m_authID The _id of the article author.
  * @param {[String]}                        m_tags The tags that the author has given.
+ * @param {function}                        callback The callback function.
  * 
  * @returns {String}    The customURL of the blog.
  */
 const createBlog = async function (m_title, m_body, m_authID, m_tags, callback) {
     const newBlog = await new blogModel({title: m_title, body: m_body, auth: m_authID, customURL: removeTone(m_title)});
 
-    const newBlogURL = removeTone(newBlog.get('title'));
+    const newBlogURL = removeTone(newBlog.get('title')) + '-' + idHash(newBlog.get('id'), EXTEND_LINK_LENGHT).toString();
     newBlog.set('customURL', newBlogURL);
     console.log('Creating new blog at /%s.', newBlog.get('customURL'));
 
-    // todo handle duplicated blog url
+
+    // todo handle the case where title is too short or too long.
+
+
     try{
         await newBlog.$__save({}, function(err, res){
             if (err){
@@ -109,11 +135,12 @@ const findBlogByURL = async function(m_blogURL){
 
 /**
  * Finds and removes a blog by a URL.
- * @param {String} m_blogURL    The URL of being removed blog.
+ * @param {String}      m_blogURL   The URL of being removed blog.
+ * @param {function}    callback    The callback function.
  * 
  * @returns {boolean}   If the removing is succeed.
  */
-const removeBlogByURL = async function(m_blogURL){
+const removeBlogByURL = async function(m_blogURL, callback){
     console.log('Removing a blog at URL %s.', m_blogURL);
 
 
@@ -123,15 +150,15 @@ const removeBlogByURL = async function(m_blogURL){
         }else{
             if (res){
                 console.log('Removed a blog at %s.', m_blogURL);
-                return true;
+                callback(true);
             }else{
                 console.log('The blog doesn\'t exist.');
-                return false;
+                callback(false);
             }
         }
     }).catch(function(err){
         console.log(err.errmsg);
-        return false;
+        callback(false);
     })
 }
 
@@ -167,25 +194,6 @@ const passCensorshipBlogByID = async function(_id ){
 }
 
 
-/**
- * add a comment to a blog
- * @param {mongoose.Schema.Type.ObjectID}   _blogID   id 
- * @param {mongoose.Schema.Type.ObjectID}   _idUserCommnent 
- * @param {string}                          content 
- */
-const commmentBlogByID = async function(_blogID, _idUserCommnent, content){
-    // await blogmodel.findById(_blogID, function(BlogCrr){
-    //     BlogCrr.comment.add({
-    //         _blogID,
-    //         _idUserCommnent,
-    //         content
-    //     });
-    //     console.log(BlogCrr.comment);
-    // })
-    console.log('commentBlogByID');
-}
-
-
 const emptyDatabase = function(){
     blogModel.deleteMany({}, function(err){
         if (err){
@@ -212,7 +220,6 @@ module.exports = {
     removeBlogByFindID, 
     updateBlogByID,
     passCensorshipBlogByID,
-    commmentBlogByID,
     findBlogByURL,
     emptyDatabase,
     removeBlogByURL

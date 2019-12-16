@@ -17,7 +17,9 @@ const blogSchema = new mongoose.Schema({
 
         minlength: MIN_TITLE_LENGTH,
 
-        maxlength: MAX_TITLE_LENGTH
+        maxlength: MAX_TITLE_LENGTH,
+
+        default: 'Blog title'
     },
 
 
@@ -71,28 +73,15 @@ const blogSchema = new mongoose.Schema({
     }
 })
 
+blogSchema.index({customURL: 1, _id: 1, id: 1, title: 0});
 
 // Validate the custom URL before saving.
 blogSchema.set('validateBeforeSave', true);
 
-// todo
-blogSchema.path('customURL').validate(function (value) {
-    return value != null;
-});
+// // todo
+// blogSchema.path('customURL').validate(function (value) {
+//     return value != null;
+// });
 
-
-blogSchema.methods.getTitle = function(){
-    return this.title;
-}
-
-
-blogSchema.methods.getID = function(){
-    return this._id;
-}
-
-
-blogSchema.methods.getURL = function(){
-    return this.customURL;
-}
 
 module.exports = mongoose.model('blogModel', blogSchema);
