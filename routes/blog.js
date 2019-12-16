@@ -13,22 +13,64 @@ router.get('/', function(req, res, next) {
 });
 
 
-/* test create blog*/
+/**
+ * Create a new blog. Needs to change when merged with front-end.
+ */
 router.get('/new-blog', async function(req, res, next) {
   newBlogURL = await blogService.createBlog('Blog mới nè', 'Body blog mới nè.', null, ['testTag', 'Tagtest']);
   res.send(newBlogURL);
 });
 
 
+/**
+ * ###This route is for testing only.
+ * Removes everything from the database.
+ */
 router.get('/reset', async function(req, res, next){ 
   blogService.emptyDatabase();
   res.end();
 });
 
 
+/**
+ * Removes a blog by its customURL.
+ */
+router.get('/remove/:blogURL', async function(req, res, next){
+  const removingAction = await blogService.removeBlogByURL(req.params.blogURL);
+
+  if (removingAction){
+    res.send('Removed a blog.');
+  }else{
+    res.send('Cannot remove blog.');
+  }
+
+  res.end();
+})
+
+
+/**
+ * Gets access to a blog by its customURL.
+ */
 router.get('/:blogURL', async function(req, res, next){ 
+  //{censorship: res.censorship, title: res.title, body: res.body, date: res.date, auth: res.auth, tags: res.tags}
   const content = await blogService.findBlogByURL(req.params.blogURL);
-  console.log(content);
+
+
+  if (content != null){
+    var result = 'Title: ' + content.title + 
+    '.\nBody: ' + content.body + 
+    '.\nDate created: ' + content.date + 
+    '.\nAuthor: ' + content.auth +
+    '.\nTags: ';
+    await content.tags.forEach(tag => {
+      result.concat(tag, ', ');
+    });
+
+    res.send(result);
+  }else{
+    res.send('Cannot find any blog.');
+  }
+
   res.end();
 });
 

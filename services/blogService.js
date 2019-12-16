@@ -1,12 +1,28 @@
+/**
+ * This file is for blog services at WDS' Portfolio project.
+ * Auth:    Le Cong Nhan (https://www.facebook.com/lecongnhan.293)
+ *          Pham Van Minh Nhut (https://www.facebook.com/phamvmnhut)
+ */
+
+
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
+/**
+ * Mongoose's findOneAndUpdate() long pre-dates the MongoDB driver's findOneAndUpdate() function, 
+ * so it uses the MongoDB driver's findAndModify() function instead.
+ * See https://mongoosejs.com/docs/deprecations.html#-findandmodify-
+ */
+mongoose.set('useFindAndModify', false);
+
 const blogModel = require('../models/blog');
 const user = require('../models/user');
 
 
 /**
- * Remove Vietnamese tone & replace space by '-';
+ * Removes Vietnamese tone & replaces ' ' by '-';
  * @param {str} str The string that needs to be replaced.
+ * 
+ * @returns {String}    The removed & replaced string.
  */
 removeTone = function(str){
     str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
@@ -29,25 +45,28 @@ removeTone = function(str){
 
 
 /**
- * Create a new blog article & save it in the database.
- * @param {String} m_title The title of the blog article.
- * @param {String} m_body The body of the blog article (with tags).
- * @param {mongoose.Schema.Types.ObjectId} m_authID The _id of the article author.
- * @param {[String]} m_tags The tags that the author has given.
+ * Creates a new blog article & saves it in the database.
+ * @param {String}                          m_title The title of the blog article.
+ * @param {String}                          m_body The body of the blog article (with tags).
+ * @param {mongoose.Schema.Types.ObjectId}  m_authID The _id of the article author.
+ * @param {[String]}                        m_tags The tags that the author has given.
+ * 
+ * @returns {String}    The customURL of the blog.
  */
 const createBlog = async function (m_title, m_body, m_authID, m_tags) {
     const newBlog = await new blogModel({title: m_title, body: m_body, auth: m_authID, customURL: removeTone(m_title)});
 
     const newBlogURL = removeTone(newBlog.get('title'));
     newBlog.set('customURL', newBlogURL);
-    console.log('Creating new blog at /%s', newBlog.get('customURL'));
+    console.log('Creating new blog at /%s.', newBlog.get('customURL'));
+
 
     try{
-        await newBlog.$__save({}, function(err, doc){
+        await newBlog.$__save({}, function(err, res){
             if (err){
                 throw(err);
             }else{
-                console.log('Saved new blog at /%s', doc.get('customURL'));
+                console.log('Saved new blog at /%s with title %s.', res.get('customURL'), res.get('title'));
                 return newBlogURL;
             }
         });
@@ -58,33 +77,67 @@ const createBlog = async function (m_title, m_body, m_authID, m_tags) {
 
 
 /**
- * Finds a blog by a URL.
- * @param {String} m_blogURL The URL of the blog.
- * @returns {{censorship, title, body, date, auth, tags}}
+ * Finds and returns a blog by a URL.
+ * @param {String} m_blogURL    The URL of the blog.
+ * 
+ * @returns {{censorship, title, body, date, auth, tags}}   The found blog.
  */
 const findBlogByURL = async function(m_blogURL){
-    console.log('Finding a blog by URL:', m_blogURL);
+    console.log('Finding a blog by URL: %s.', m_blogURL);
 
 
-    try{
-        return await blogModel.findOne({customURL: m_blogURL}, function(err, res){
-            if (err){
-                throw err;
+    return await blogModel.findOne({customURL: m_blogURL}, function(err, res){
+        if (err){
+            throw err;
+        }else{
+            if (res){
+                console.log('Found a blog at %s with title %s.', m_blogURL, res.title);
+                return {censorship: res.censorship, title: res.title, body: res.body, date: res.date, auth: res.auth, tags: res.tags};
             }else{
-                console.log('Found a blog at %s: %s', m_blogURL, res.title);
-                 return {censorship: res.censorship, title: res.title, body: res.body, date: res.date, auth: res.auth, tags: res.tags};
+                console.log('Cannot find any blog.');
+                return false;
             }
-        })
-    }catch(err){
-        console.log(err);
-    }
+        }
+    }).catch(function(err){
+    console.log(err);
+    return null;
+    });
 }
 
 
+/**
+ * Finds and removes a blog by a URL.
+ * @param {String} m_blogURL    The URL of being removed blog.
+ * 
+ * @returns {boolean}   If the removing is succeed.
+ */
 const removeBlogByURL = async function(m_blogURL){
+    console.log('Removing a blog at URL %s.', m_blogURL);
 
+
+    await blogModel.findOneAndRemove({customURL: m_blogURL}, function(err, res){
+        if (err){
+            throw err;
+        }else{
+            if (res){
+                console.log('Removed a blog at %s.', m_blogURL);
+                return true;
+            }else{
+                console.log('The blog doesn\'t exist.');
+                return false;
+            }
+        }
+    }).catch(function(err){
+        console.log(err.errmsg);
+        return false;
+    })
 }
 
+
+/**
+ * 
+ * @param {*} _id 
+ */
 const removeBlogByFindID = async function (_id) {
     return await usermodel.findByIdAndDelete(_id);
 }
@@ -114,9 +167,9 @@ const passCensorshipBlogByID = async function(_id ){
 
 /**
  * add a comment to a blog
- * @param {mongoose.Schema.Type.ObjectID} _blogID   id 
- * @param {mongoose.Schema.Type.ObjectID} _idUserCommnent 
- * @param {string} content 
+ * @param {mongoose.Schema.Type.ObjectID}   _blogID   id 
+ * @param {mongoose.Schema.Type.ObjectID}   _idUserCommnent 
+ * @param {string}                          content 
  */
 const commmentBlogByID = async function(_blogID, _idUserCommnent, content){
     // await blogmodel.findById(_blogID, function(BlogCrr){
