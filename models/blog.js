@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
+
 const user = require('./user');
 
 
@@ -10,6 +11,7 @@ const MAX_TITLE_LENGTH = 256;
  * Blog Schema & Model 
  */
 const blogSchema = new mongoose.Schema({
+
     title: {
         require: true,
 
@@ -44,7 +46,9 @@ const blogSchema = new mongoose.Schema({
     auth : {
         type: mongoose.Schema.Types.ObjectId, 
 
+
         ref: 'user'
+
     },
 
 
@@ -93,3 +97,4 @@ blogSchema.methods.updateViews = function(){
 
 
 module.exports = mongoose.model('blogModel', blogSchema);
+

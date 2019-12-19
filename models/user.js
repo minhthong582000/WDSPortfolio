@@ -33,6 +33,10 @@ const userSchema = mongoose.Schema({
         default: 'guest'
     },
 
+    avatarURL: {
+        type: "String",
+        default: "example.com/avatar.png"
+    },
     projects: {
         type: Array
     },
