@@ -1,8 +1,11 @@
 var express = require('express');
 var router = express.Router();
-const mongoose = require('mongoose');
+
 //const blogModel = require('../models/blog');
+
 const blogService = require('../services/blogService');
+const loginService = require('../services/loginService');
+
 const fs = require('fs');
 const app = require('../app');
 
@@ -14,22 +17,22 @@ router.get('/', function(req, res, next) {
 
 
 /**
- * Create a new blog. Needs to change when merged with front-end.
+ * Test user
  */
-router.get('/new-blog', async function(req, res, next) {
-  await blogService.createBlog('Blog mới nè', 'Body blog mới nè.', null, ['testTag', 'Tagtest'], function(newBlogURL){
-    res.redirect(newBlogURL);
-  });
-});
+router.get('/new-user', async function(req, res, next){
+  const result = await loginService.createUser({email: 'lecongnhan29@gmail.com', pwd: 'NhanLe123', role: 'member', studentID: '18120493', university: 'HCMUS'})
+  console.log(result);
+})
 
 
 /**
- * ###This route is for testing only.
- * Removes everything from the database.
+ * Create a new blog. Needs to change when merged with front-end.
  */
-router.get('/reset', async function(req, res, next){ 
-  blogService.emptyDatabase();
-  res.end();
+router.get('/new-blog', async function(req, res, next) {
+
+  await blogService.createBlog('Blog mới nè', 'Body blog mới nè.', '5dfad8d9a8ea5953b851ddff', ['testTag', 'Tagtest'], function(newBlogURL){
+    res.redirect(newBlogURL);
+  });
 });
 
 
@@ -51,22 +54,48 @@ router.get('/remove/:blogURL', async function(req, res, next){
 
 
 /**
+ * This route is for testing only.
+ * Finds the blogs by userID.
+ */
+router.get('/auth/:userID', async function(req, res, next){
+  await blogService.findBlogsByUser(req.params.userID, function(result){
+    for (i in result){
+      console.log(result[i].customURL);
+    }
+
+    res.send('Found!');
+  });
+});
+
+
+router.get('/tags/:m_tag', async function(req, res, next){
+  await blogService.findBlogByTag(req.params.m_tag, function(m_result){
+    for (i in m_result){
+      console.log(m_result[i].customURL);
+    }
+    res.end()
+  });
+})
+
+
+/**
  * Gets access to a blog by its customURL.
  */
 router.get('/:blogURL', async function(req, res, next){ 
-  //{censorship: res.censorship, title: res.title, body: res.body, date: res.date, auth: res.auth, tags: res.tags}
   const content = await blogService.findBlogByURL(req.params.blogURL);
 
 
   if (content != null){
+    blogService.updateView(req.params.blogURL);
+
     var result = 'Title: ' + content.title + 
     '.\nBody: ' + content.body + 
     '.\nDate created: ' + content.date + 
     '.\nAuthor: ' + content.auth +
     '.\nTags: ';
-    await content.tags.forEach(tag => {
-      result.concat(tag, ', ');
-    });
+    for (i in content.tags){
+      result = result.concat(content.tags[i], ', ');
+    }
 
     res.send(result);
   }else{

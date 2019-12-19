@@ -58,7 +58,7 @@ const blogSchema = new mongoose.Schema({
     customURL : {
         require: true,
 
-        type: String, // todo
+        type: String, 
 
         default: "default-URL",
 
@@ -70,6 +70,15 @@ const blogSchema = new mongoose.Schema({
         type: [String],
         
         index: true
+    },
+
+
+    viewsCount: {
+        type: Number,
+
+        default: 0,
+
+        require: true
     }
 })
 
@@ -78,10 +87,9 @@ blogSchema.index({customURL: 1, _id: 1, id: 1, title: 0});
 // Validate the custom URL before saving.
 blogSchema.set('validateBeforeSave', true);
 
-// // todo
-// blogSchema.path('customURL').validate(function (value) {
-//     return value != null;
-// });
+blogSchema.methods.updateViews = function(){
+    this.viewsCount++;
+}
 
 
 module.exports = mongoose.model('blogModel', blogSchema);

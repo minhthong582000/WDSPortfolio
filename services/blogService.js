@@ -5,12 +5,15 @@
  */
 
 
- const EXTEND_LINK_LENGHT = 5;
- const HASH_KEY = 53;
+ /**
+  * As the max length of the title is 256;
+  */
+ const HASH_KEY = 257;
 
 
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
+
 /**
  * Mongoose's findOneAndUpdate() long pre-dates the MongoDB driver's findOneAndUpdate() function, 
  * so it uses the MongoDB driver's findAndModify() function instead.
@@ -77,14 +80,14 @@ removeTone = function(str){
  * @returns {String}    The customURL of the blog.
  */
 const createBlog = async function (m_title, m_body, m_authID, m_tags, callback) {
-    const newBlog = await new blogModel({title: m_title, body: m_body, auth: m_authID, customURL: removeTone(m_title)});
+    const newBlog = await new blogModel({title: m_title, body: m_body, auth: m_authID, customURL: removeTone(m_title), tags: m_tags});
 
-    const newBlogURL = removeTone(newBlog.get('title')) + '-' + idHash(newBlog.get('id'), EXTEND_LINK_LENGHT).toString();
+    const newBlogURL = removeTone(newBlog.get('title')) + '-' + idHash(newBlog.get('id')).toString();
     newBlog.set('customURL', newBlogURL);
     console.log('Creating new blog at /%s.', newBlog.get('customURL'));
 
 
-    // todo handle the case where title is too short or too long.
+    // todo handles the case where title is too short or too long.
 
 
     try{
@@ -93,14 +96,12 @@ const createBlog = async function (m_title, m_body, m_authID, m_tags, callback) 
                 throw(err);
             }else{
                 console.log('Saved new blog at /%s with title %s.', res.get('customURL'), res.get('title'));
-                return newBlogURL;
+                callback(newBlogURL);
             }
         });
     }catch(err){
         console.log(err.errmsg);
     }
-
-    callback(newBlogURL);
 }
 
 
@@ -108,7 +109,7 @@ const createBlog = async function (m_title, m_body, m_authID, m_tags, callback) 
  * Finds and returns a blog by a URL.
  * @param {String} m_blogURL    The URL of the blog.
  * 
- * @returns {{censorship, title, body, date, auth, tags}}   The found blog.
+ * @returns {blogModel}   The found blog.
  */
 const findBlogByURL = async function(m_blogURL){
     console.log('Finding a blog by URL: %s.', m_blogURL);
@@ -120,14 +121,14 @@ const findBlogByURL = async function(m_blogURL){
         }else{
             if (res){
                 console.log('Found a blog at %s with title %s.', m_blogURL, res.title);
-                return {censorship: res.censorship, title: res.title, body: res.body, date: res.date, auth: res.auth, tags: res.tags};
+                return res;
             }else{
                 console.log('Cannot find any blog.');
                 return false;
             }
         }
     }).catch(function(err){
-    console.log(err);
+    console.log(err.errmsg);
     return null;
     });
 }
@@ -164,6 +165,32 @@ const removeBlogByURL = async function(m_blogURL, callback){
 
 
 /**
+ * Finds one or more blogs by a tag.
+ * @param {String}      m_tag       The tag that needs to find.
+ * @param {function}    callback    The callback function.
+ */
+const findBlogByTag = async function(m_tag, callback){
+    var result = [];
+
+    await blogModel.find(function(err, res){
+        if (!err){
+            for (i in res){
+                if (res[i].tags.includes(m_tag)){
+                    result.push(res[i]);
+                }
+            }
+
+            callback(result);
+        }else{
+            throw err;
+        }
+    }).catch(function(err){
+        console.log(err.errmsg);
+    })
+}
+
+
+/**
  * 
  * @param {*} _id 
  */
@@ -194,25 +221,55 @@ const passCensorshipBlogByID = async function(_id ){
 }
 
 
-const emptyDatabase = function(){
-    blogModel.deleteMany({}, function(err){
+/**
+ * Finds the blog(s) by the user ID.
+ * @param {mongoose.Schema.Types.ObjectId}  m_userID    The author ID.
+ * @param {function}                        callback    The call back function.
+ * 
+ * @returns {[blogModel]}   The blogs that was created by m_userID.
+ */
+const findBlogsByUser = async function(m_userID, callback){
+    console.log('Finding blogs by user %s', m_userID);
+    var result = [];
+
+    await blogModel.find(function(err, res){
         if (err){
             throw err;
         }else{
-            console.log('Emptied database.')
+            for (i in res){
+                if (res[i].auth == m_userID){
+                    result.push(res[i]);
+                }
+            }
+
+            callback(result);
         }
     }).catch(function(err){
-        console.log(err);
+        console.log(err.errmsg);
+    });
+}; // todo
+
+
+/**
+ * 
+ * @param {String} m_blogURL 
+ */
+const updateView = async function(m_blogURL){
+    await blogModel.updateOne({customURL: m_blogURL}, {$inc: {viewsCount: 1}, function(err, raw){
+        if (err){
+            throw err;
+        }else{
+            console.log('Updated views at %s', raw.customURL);
+        }
+    }}).catch(function(err){
+        console.log(err.errmsg);
     })
 }
-
-const findBlogsByUser = function(){}; // todo
-
 
 const rankBlog = function(){}; // todo
 
 
-const addTag = function(){}; //todo
+const addTag = function(){}; // todo
 
 
 module.exports = {
@@ -221,6 +278,8 @@ module.exports = {
     updateBlogByID,
     passCensorshipBlogByID,
     findBlogByURL,
-    emptyDatabase,
-    removeBlogByURL
+    removeBlogByURL,
+    findBlogsByUser,
+    updateView,
+    findBlogByTag
 }
