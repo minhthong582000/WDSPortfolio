@@ -14,13 +14,13 @@ module.exports.createUser = async function(userDTO) {
      }
 }
 
-module.exports.checkByID = async (_id)=>{
+module.exports.findByID = async (_id)=>{
     try {
-        let user = await userModel.findById(_id, (err)=>{
+        let result = await userModel.findById(_id, (err)=>{
             if (err) 
                 throw err;
         });
-        return (user)? true : false;
+        return result;
     } catch(err) {
         console.log(err);
     }

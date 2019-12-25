@@ -5,6 +5,7 @@ const logger = require('morgan');
 const env = require('dotenv');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const acl = require('./config/validateAccess');
 
 require('dotenv/config');
 require('./config/passport');
@@ -28,6 +29,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+//accessControl
+app.all('*', acl.hasPerms);
 
 app.use('/', indexRouter);
 app.use('/login', loginRouter);

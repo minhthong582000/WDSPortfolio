@@ -12,7 +12,7 @@ opts.secretOrKey = process.env.JWTSECRET || 'thongdz';
 passport.use('passport.jwt', new passportJWT(
     opts,
     async (payload, done)=>{
-        let user = await userService.checkByID(payload.user._id);
+        let user = await userService.findByID(payload.user._id);
         if (!user) {
             return done(null, false, { message: 'Incorrect username or password' });
         };
@@ -31,7 +31,7 @@ passport.use('local-signup', new LocalStrategy({
         birthday: Joi.number().integer().min(1900).max(2100),
         university: Joi.string().required(),
         studentID: Joi.string().required()
-    });
+    }).unknown(true);
     let DTO = req.body;
     let valid = await signUpSchema.validate(DTO, { abortEarly: false });
     if (valid.error) {

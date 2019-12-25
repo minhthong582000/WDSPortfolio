@@ -5,12 +5,10 @@ var projectController = require('../controller/projectController');
 /* GET users listing. */
 router.get('/', projectController.info);
 
-router.post('/', projectController.create);
+router.post('/projects/create', projectController.create);
 
-router.post('/update', projectController.update);
+router.put('/projects/update', projectController.update);
 
-router.post('/delete', projectController.deleteById);
-
-
+router.delete('/projects/delete', projectController.deleteById);
 
 module.exports = router;
