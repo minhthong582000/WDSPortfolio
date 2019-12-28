@@ -8,6 +8,7 @@ const userService = require('../services/userService');
 let opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.JWTSECRET || 'thongdz';
+opts.passReqToCallback = true;
 
 passport.use('passport.jwt', new passportJWT(
     opts,
@@ -15,8 +16,11 @@ passport.use('passport.jwt', new passportJWT(
         let user = await userService.findByID(payload.user._id);
         if (!user) {
             return done(null, false, { message: 'Incorrect username or password' });
-        };
-        return done(null, user);
+        }
+        else {
+            req.user = user;
+            return done(null, user);
+        }
       }
 ));
 

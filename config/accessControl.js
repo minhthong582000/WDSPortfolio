@@ -7,26 +7,34 @@ class AccessControl {
         this.method = _method;
         this.role = _role || 'guest';
     }
-    static simpleUrl(url) {
-        if(url in rights.guest[this.method])
+    static isSimpleUrl(url, method) {
+        if(url in rights.guest.method) {
             return true;
-        return false;
+        }
+        else {
+            return false;
+        }    
     }
-    static authUrl(url) {
-        if(this.url in rights.admin[this.method])
+    static isAuthUrl(url, method) {
+        if(this.url in rights.admin.method){
             return true;
-        return false;
+        }
+        else {
+            return false;
+        }    
     }
     findRights() {
         return rights[this.role][this.method];
     }
     isAllowed() {
         let userRights = this.findRights();
-        if (this.url in userRights)
+        if (this.url in userRights){
             return true;
-        else 
+        }
+        else {
             return false;
+        }    
     }
 }
 
-module.exports = {AccessControl};
+module.exports = { AccessControl };
