@@ -23,6 +23,7 @@ const projectsRouter = require('./routes/projects');
 const usersRouter = require('./routes/users');
 const adminRouter = require('./routes/admin');
 const blogRouter = require('./routes/blog');
+const resetRouter = require('./routes/reset')
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -49,6 +50,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/reset', resetRouter);
 app.use('/login', loginRouter);
 app.use('/signup', signupRouter);
 app.use('/activities', activitiesRouter);
@@ -57,10 +59,9 @@ app.use('/users', usersRouter);
 app.use('/admin', adminRouter);
 app.use('/blog', blogRouter);
 
-
 const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
 mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
-    if (err) 
+    if (err)
         console.log(err);
     console.log('Connected to database');
 });

@@ -10,11 +10,16 @@ const passport = require("passport");
 // for custom callback
 router.post('/local', function (req, res, next) {
     if (req.body.email && req.body.pwd) {
-        passport.authenticate('local-signup', function (err, user, info) {
-            if (err) return next(err)
-            if (info)
-                res.status(info.statusCode).send(info);
-        })(req, res, next);
+        passport.authenticate('local-signup',
+            {
+                successRedirect: '/',
+                failureRedirect: '/login'
+            }
+            , function (err, user, info) {
+                if (err) return next(err)
+                if (info)
+                    res.status(info.statusCode).send(info);
+            })(req, res, next);
     }
     else {
         res.status(401).send({ statusCode: 401, status: 'unauthorized', msg: ['email or password is empty'] })
