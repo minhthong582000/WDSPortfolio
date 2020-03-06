@@ -1,6 +1,7 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 const userController = require('../controller/signup-controller')
+
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
@@ -10,8 +11,9 @@ passport.deserializeUser(function (id, done) {
         done(err, user);
     });
 });
+
 passport.use('local-signup', new LocalStrategy({
     usernameField: 'email',
     passwordField: 'pwd',
     passReqToCallback: true,
-}, userController.createNewAcount));
+}, userController.createNewAccount));
