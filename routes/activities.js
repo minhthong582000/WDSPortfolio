@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+
 var controller = require('../controller').activityController;
 
 /* GET users listing. */
@@ -20,5 +21,6 @@ router.route('/:id/img') //Thêm
 //Xóa ảnh hoạt động
 router.route('/:id/:img') 
 .delete(controller.getDelImgForActivity)
+
 
 module.exports = router;
