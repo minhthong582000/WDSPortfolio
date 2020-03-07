@@ -1,5 +1,5 @@
 const UserModel = require('../models/user')
-const password = require('../services/password')
+// const password = require('../services/password') //này đang lỗi, tạm cmt(Dưa Hauz)
 
 const { body, validationResult } = require('express-validator');
 

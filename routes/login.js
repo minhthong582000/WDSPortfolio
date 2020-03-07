@@ -5,14 +5,12 @@ const uservalidate = require('../middleware/checkPermission');
 
 //local-login
 router.get('/', function(req, res, next) {
-  res.render("index");
+  res.status(200).json({"msg": "success call login page"});
 });
 
-router.post('/',uservalidate.checkInputLogin, passport.authenticate("local.login", {
-  successRedirect: '/',
-  failureRedirect: '/login',
-  failureFlash: true
-}));
+router.post('/',uservalidate.checkInputLogin, passport.authenticate("local.login"),function(req,res){
+    res.status(200).json({ "msg": "success login" });
+});
 
 
 module.exports = router;

@@ -1,4 +1,4 @@
 
-module.exports = {
-    activityController: require('./activity')
-}
+// module.exports = {
+//     activityController: require('./activity')
+// }
