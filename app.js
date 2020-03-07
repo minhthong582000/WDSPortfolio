@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const logger = require('morgan');
 const env = require('dotenv');
 const flash = require('connect-flash');
@@ -8,9 +9,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const session = require('express-session');
-
-const bodyParser = require('body-parser');
-
+const validator = require('express-validator');
 require('dotenv/config');
 require('./config/passport');
 
@@ -51,7 +50,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
 app.use('/signup', signupRouter);
-app.use('/activities', activitiesRouter);
+// app.use('/activities', activitiesRouter); //này chưa hoàn thành nên tạm cmt (Dưa Hauz)
 app.use('/projects', projectsRouter);
 app.use('/users', usersRouter);
 app.use('/admin', adminRouter);
@@ -59,7 +58,7 @@ app.use('/blog', blogRouter);
 
 
 const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
-mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
+mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/myapp', mongooseOption, (err) => {
     if (err) 
         console.log(err);
     console.log('Connected to database');
@@ -87,5 +86,9 @@ app.use(function (err, req, res, next) {
     // send error status
     res.status(err.status || 500);
 });
+
+app.listen(3000,function(){
+    console.log('app listen port 3000');
+})
 
 module.exports = app;
