@@ -1,16 +1,14 @@
 const passport = require('passport');
 const express = require('express');
 const router = express.Router();
-const { validate, keyValidate } = require('../middleware/checkPermission');
+const uservalidate = require('../middleware/checkPermission');
 
 //local-login
 router.get('/', function(req, res, next) {
-  var messages = req.flash("error");
-  res.render("index", { messages });
-  next();
+  res.render("index");
 });
 
-router.post('/',validate(keyValidate), passport.authenticate("local.login", {
+router.post('/',uservalidate.checkInputLogin, passport.authenticate("local.login", {
   successRedirect: '/',
   failureRedirect: '/login',
   failureFlash: true
