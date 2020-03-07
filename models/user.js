@@ -8,25 +8,31 @@ const userSchema = mongoose.Schema({
         required: true,
         unique: true
     },
+
     pwd: {
         type: String,
         required: true
     },
+
     birthday: Date,
+    
     university: {
         type: String,
         required: true
     },
+
     studentID: {
         type: String,
         require: true,
         unique: true
     },
+
     role: {
         type: String,
         enum: ['member', 'admin', 'guest'],
         default: 'guest'
     },
+
     avatarURL: {
         type: "String",
         default: "example.com/avatar.png"
@@ -34,9 +40,11 @@ const userSchema = mongoose.Schema({
     projects: {
         type: Array
     },
+
     activities: {
         type: Array
     },
+    
     skills: {
         type: Array
     },

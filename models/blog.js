@@ -1,35 +1,100 @@
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 
-const blog = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
+const user = require('./user');
+
+
+const MIN_TITLE_LENGTH = 1;
+const MAX_TITLE_LENGTH = 256;
+
+/**
+ * Blog Schema & Model 
+ */
+const blogSchema = new mongoose.Schema({
+
     title: {
         require: true,
+
         type: String,
-        unique: true
+
+        minlength: MIN_TITLE_LENGTH,
+
+        maxlength: MAX_TITLE_LENGTH,
+
+        default: 'Blog title'
     },
-    content: {
+
+
+    body: {
         require : true,
+
         type: String,
-        default : "Content default"
+
+        default : "Default content."
     },
+
+
     date : {
+        require : true,
+
         type: Date,
+
         default : Date.now
     },
-    Auth : {
+
+
+    auth : {
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'users'
+
+
+        ref: 'user'
+
     },
+
+
     censorship :{
         type : Boolean,
+
         default : false
     },
-    comment : [{
-        UserComment : {
-            type : mongoose.Schema.Types.ObjectId,
-            ref : "users"
-        },
-        contentComment : String
-    }]
+
+    
+    customURL : {
+        require: true,
+
+        type: String, 
+
+        default: "default-URL",
+
+        unique: true,
+    },
+
+
+    tags: {
+        type: [String],
+        
+        index: true
+    },
+
+
+    viewsCount: {
+        type: Number,
+
+        default: 0,
+
+        require: true
+    }
 })
+
+blogSchema.index({customURL: 1, _id: 1, id: 1, title: 0});
+
+// Validate the custom URL before saving.
+blogSchema.set('validateBeforeSave', true);
+
+blogSchema.methods.updateViews = function(){
+    this.viewsCount++;
+}
+
+
+module.exports = mongoose.model('blogModel', blogSchema);
+
