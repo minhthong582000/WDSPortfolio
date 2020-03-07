@@ -4,7 +4,7 @@ module.exports.info = async function(req,res,next){
     try {
         let projectId = req.body.id;
         let project = await projectServices.findByProjectId(projectId);
-        return res.send('/',{project});
+        return res.send(project);
     } catch (error) {
         return next(error);
     }

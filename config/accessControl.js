@@ -8,14 +8,20 @@ class AccessControl {
         this.role = _role || 'guest';
     }
     static simpleUrl(url) {
-        if(url in rights.guest[this.method])
+        if(url in rights.guest[this.method]) {
             return true;
-        return false;
+        }
+        else {
+            return false;
+        }
     }
     static authUrl(url) {
-        if(this.url in rights.admin[this.method])
+        if(this.url in rights.admin[this.method]) {
             return true;
-        return false;
+        }
+        else {
+            return false;
+        }
     }
     findRights() {
         return rights[this.role][this.method];
