@@ -1,14 +1,10 @@
-const { check, validationResult } = require('express-validator');
-
 const Joi = require('@hapi/joi');
 
-
-const loginSchema = Joi.object({
-  email: Joi.string().min(7).max(30).email().required(),
-  password: Joi.string().min(3).max(30).required()
-});
-
 function checkInputLogin(req, res, next){
+    const loginSchema = Joi.object({
+      email: Joi.string().min(7).max(30).email().required(),
+      password: Joi.string().min(3).max(30).required()
+    });
     var criteria = req.body;
     let valid = loginSchema.validate(criteria, { abortEarly: false });
     if (valid.error) {

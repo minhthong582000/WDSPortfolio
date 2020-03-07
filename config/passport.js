@@ -17,7 +17,7 @@ passport.use('local.login', new LocalStrategy({
         if (!user) {
             return done(null, false, { message: 'Incorrect username or password' });
         }
-        if (password != '1234567') {
+        if (!user.validPassword(password)) {
             return done(null, false, { message: 'Incorrect username or password' });
         }
         return done(null, user);
