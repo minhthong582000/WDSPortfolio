@@ -1,5 +1,6 @@
-const UserModel = require('../models/user');
-const password = require('../services/password');
+const UserModel = require('../models/user')
+// const password = require('../services/password') //này đang lỗi, tạm cmt(Dưa Hauz)
+
 const { body, validationResult } = require('express-validator');
 
 module.exports.deleteByStudentID = async (req, res, next) => {
@@ -86,3 +87,4 @@ module.exports.index = async (req, res, next) => {
     const users = await UserModel.find();
     return res.json(users)
 };
+
