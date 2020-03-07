@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 //accessControl
-app.all('*', acl.hasPerms);
+app.all('*', acl.hasPermission);
 
 app.use('/', indexRouter);
 app.use('/login', loginRouter);

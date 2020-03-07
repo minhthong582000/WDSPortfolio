@@ -21,18 +21,20 @@ class AccessControl {
         }
         else {
             return false;
-        }
+        }    
     }
     findRights() {
         return rights[this.role][this.method];
     }
     isAllowed() {
         let userRights = this.findRights();
-        if (this.url in userRights)
+        if (this.url in userRights){
             return true;
-        else 
+        }
+        else {
             return false;
+        }    
     }
 }
 
-module.exports = {AccessControl};
+module.exports = { AccessControl };
