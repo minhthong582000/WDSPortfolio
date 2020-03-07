@@ -1,19 +1,74 @@
 const UserModel = require('../models/user')
 // const password = require('../services/password') //này đang lỗi, tạm cmt(Dưa Hauz)
 
+const UserModel = require('../models/user');
+const ProjectModel = require('../models/projects')
+const ActivityModel = require('../models/activities')
+const password = require('../services/password');
 const { body, validationResult } = require('express-validator');
+const ObjectId = require('mongodb').ObjectId
+const crypto = require("crypto");
+var id = crypto.randomBytes(20).toString('hex');
+
+module.exports.createByStudentID = async (req, res, next) => {
+    const studentID = req.params.studentID
+    const user = await UserModel.findOne({ studentID: studentID })
+    if (user) {
+        try {
+            if (req.body.activityID) {
+                console.log(req.body.activityID)
+                newActivity = await ActivityModel.findById(req.body.activityID);
+                await user.activities.push(newActivity);
+            }
+            if (req.body.projectID) {
+                newProject = await ProjectModel.findById(req.body.projectID);
+                await user.projects.push(newProject)
+            }
+            if (req.body.skill) {
+                await user.skills.push({
+                    id: crypto.randomBytes(20).toString('hex'),
+                    content: req.body.skill
+                })
+            }
+            await user.save()
+        } catch (error) {
+            next(error)
+        }
+    }
+    return res.redirect('/admin');
+}
+
 
 module.exports.deleteByStudentID = async (req, res, next) => {
     //find and delete
-    user = await UserModel.findById(adminId)
     const studentID = req.params.studentID
-    await UserModel.findOneAndDelete({ studentID: studentID })
+    if (req.body.avatarURL) {
+        await UserModel.findOneAndUpdate({ studentID: studentID },
+            { avatarURL: UserModel.schema.path("avatarURL").defaultValue })
+    }
+    try {
+        await UserModel.findOneAndUpdate(
+            {
+                studentID: studentID
+            },
+            {
+                $pull: {
+                    projects: { _id: ObjectId(req.body.projectID) },
+                    activities: { _id: ObjectId(req.body.activityID) },
+                    skills: { id: req.body.skillID },
+                },
+            }
+        )
+    }
+    catch (err) {
+        next(err);
+    }
     return res.redirect('/admin');
 }
 
 module.exports.updateByStudentID = async (req, res, next) => {
     //find user to update
-    updateUser = await UserModel.findOne({ studentID: req.params.studentID })
+    var updateUser = await UserModel.findOne({ studentID: req.params.studentID })
     if (updateUser) {
         if (req.body.email) {
             await body('email').isEmail().withMessage('Must be a valid email').run(req);
@@ -53,8 +108,19 @@ module.exports.updateByStudentID = async (req, res, next) => {
         if (req.body.pwd) {
             req.body.pwd = password.hashPwd(req.body.pwd);
         }
-
-        await UserModel.findOneAndUpdate({ studentID: req.params.studentID }, req.body);
+        if (req.body.skillID && req.body.skillContent) {
+            content = await UserModel.findOneAndUpdate({
+                studentID: req.params.studentID,
+                'skills.id': req.body.skillID
+            },
+                {
+                    $set: {
+                        'skills.$.content': req.body.skillContent,
+                    },
+                },
+            )
+        };
+        await UserModel.findOneAndUpdate({ studentID: req.params.studentID }, req.body)
         return res.redirect('/admin');
     }
     return res.status(404).json({
@@ -67,21 +133,6 @@ module.exports.updateByStudentID = async (req, res, next) => {
         }
     })
 }
-
-// module.exports.create = async (req, res, next) => {
-//     try {
-//         new_user = new UserModel({
-//             email: req.body.email,
-//             pwd: password.hashPwd(req.body.pwd),
-//             university: req.body.university,
-//             studentID: req.body.studentID,
-//         })
-//     } catch (error) {
-//         return next(error);
-//     }
-//     await new_user.save();
-//     return res.redirect('/admin');
-// }
 
 module.exports.index = async (req, res, next) => {
     const users = await UserModel.find();
