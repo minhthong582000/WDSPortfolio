@@ -26,16 +26,10 @@ const resetRouter = require('./routes/reset')
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({
-    name: "passport",
-    proxy: true,
-    secret: process.env.TOKEN_SECRET || "thongdz",
-    resave: true,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 30 * 24 * 60 * 60 * 1000 //30 days
-    }
-}));
+app.use((err, req, res, next) => {
+    console.error(err.message); // Log error message in our server's console
+    res.status(500).json({ error: "Something went wrong" });
+});
 
 app.use(flash());
 app.use(passport.initialize());
