@@ -1,5 +1,5 @@
-const nodemailer = require("nodemailer");
-module.exports.resetmail=function(){console.log("mailsent")}
+// const nodemailer = require("nodemailer"); //đang bị lỗi require nodemailer(Dưa Hauz)
+module.exports.resetmail = function(){console.log("mailsent")}
 // module.exports.resetmail = async function (token, email) {
 //     let account = await nodemailer.createTestAccount();
 //     let transporter = nodemailer.createTransport({
