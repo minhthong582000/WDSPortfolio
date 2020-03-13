@@ -26,16 +26,10 @@ const resetRouter = require('./routes/reset')
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({
-    name: "passport",
-    proxy: true,
-    secret: process.env.TOKEN_SECRET || "thongdz",
-    resave: true,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 30 * 24 * 60 * 60 * 1000 //30 days
-    }
-}));
+app.use((err, req, res, next) => {
+    console.error(err.message); // Log error message in our server's console
+    res.status(500).json({ error: "Something went wrong" });
+});
 
 app.use(flash());
 app.use(passport.initialize());
@@ -59,20 +53,14 @@ app.use('/admin', adminRouter);
 app.use('/blog', blogRouter);
 
 const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
-<<<<<<< HEAD
-mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
-<<<<<<< HEAD
-    if (err)
-=======
 
-=======
-mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/myapp', mongooseOption, (err) => {
->>>>>>> b500c473c7c988b453b802d497347ee4f5260470
-    if (err) 
->>>>>>> 27917f33e6c413fac5d9386a2c096fb7f603f0b5
-        console.log(err);
-    console.log('Connected to database');
-});
+mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
+    if(err)
+        console.log(err)
+    else
+        console.log('connect to database')
+})
+
 
 
 //REDIRECT WRONG URL.
