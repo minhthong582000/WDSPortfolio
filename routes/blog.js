@@ -4,7 +4,7 @@ var router = express.Router();
 //const blogModel = require('../models/blog');
 
 const blogService = require('../services/blogService');
-const loginService = require('../services/loginService');
+// const loginService = require('../services/loginService');//đang gặp lỗi ở require này, chưa có login service(Dưa Hauz)
 
 const fs = require('fs');
 const app = require('../app');

@@ -4,7 +4,6 @@ const accessTokenSecret = process.env.TOKEN_SECRET || "access-token-secret-Webde
 //function kiểm tra token
 let isAuth = async (req, res, next) => {
     const tokenFromClient = req.body.token || req.cookies.access_token || req.get("access_token");
-
     if (tokenFromClient) {
         // Nếu tồn tại token
         try {
@@ -29,5 +28,6 @@ let isAuth = async (req, res, next) => {
 
 
 module.exports = {
+
     isAuth: isAuth
 }

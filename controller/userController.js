@@ -1,10 +1,7 @@
 const UserModel = require('../models/user')
 // const password = require('../services/password') //này đang lỗi, tạm cmt(Dưa Hauz)
-
-const UserModel = require('../models/user');
 const ProjectModel = require('../models/projects')
 const ActivityModel = require('../models/activities')
-const password = require('../services/password');
 const { body, validationResult } = require('express-validator');
 const ObjectId = require('mongodb').ObjectId
 const crypto = require("crypto");
