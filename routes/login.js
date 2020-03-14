@@ -1,7 +1,7 @@
 const passport = require('passport');
 const express = require('express');
 const router = express.Router();
-const uservalidate = require('../middleware/AuthMiddleware');
+const uservalidate = require('../controller/AuthController');
 
 //local-login
 router.get('/', function(req, res, next) {
