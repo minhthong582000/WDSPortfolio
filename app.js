@@ -60,7 +60,7 @@ app.use('/blog', blogRouter);
 
 const mongooseOption = { useNewUrlParser: true, useUnifiedTopology: true };
 mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mongooseOption, (err) => {
-    if (err) 
+    if (err)
         console.log(err);
     console.log('Connected to database');
 });
@@ -69,17 +69,17 @@ mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mo
 app.get('/warning/error', (req, res) => {
     res.status(400).send('Something wrong!');
 });
-app.all('*', function (req, res) {
+app.all('*', function(req, res) {
     res.redirect('/warning/error');
 });
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
     next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -87,5 +87,9 @@ app.use(function (err, req, res, next) {
     // send error status
     res.status(err.status || 500);
 });
+
+app.listen(3000, () => {
+    console.log("Server is up to!")
+})
 
 module.exports = app;

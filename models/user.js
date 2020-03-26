@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', true);
 const bcrypt = require('bcryptjs');
 
 const userSchema = mongoose.Schema({
@@ -24,7 +25,7 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['member','admin','guest'],
+        enum: ['member', 'admin', 'guest'],
         default: 'guest'
     },
     avatarURL: {
@@ -35,13 +36,14 @@ const userSchema = mongoose.Schema({
         type: Array
     },
     activities: {
-        type: Array
+        type: Array,
     },
-    skills: {
-        type: Array
-    }
-},
-{
+    skills: [{
+        skill: {
+            type: String,
+        }
+    }],
+}, {
     timestamps: true
 });
 
@@ -52,4 +54,3 @@ userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.pwd);
 };
 module.exports = mongoose.model('users', userSchema);
-

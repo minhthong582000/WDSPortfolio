@@ -1,137 +1,150 @@
 const UserModel = require('../models/user');
 const ProjectModel = require('../models/projects')
 const ActivityModel = require('../models/activities')
-const password = require('../services/password');
-const { body, validationResult } = require('express-validator');
-const ObjectId = require('mongodb').ObjectId
-const crypto = require("crypto");
-var id = crypto.randomBytes(20).toString('hex');
+const validator = require('validator')
+const password = require('../services/password')
 
-module.exports.createByStudentID = async (req, res, next) => {
-    const studentID = req.params.studentID
-    const user = await UserModel.findOne({ studentID: studentID })
-    if (user) {
-        try {
-            if (req.body.activityID) {
-                console.log(req.body.activityID)
-                newActivity = await ActivityModel.findById(req.body.activityID);
-                await user.activities.push(newActivity);
-            }
-            if (req.body.projectID) {
-                newProject = await ProjectModel.findById(req.body.projectID);
-                await user.projects.push(newProject)
-            }
-            if (req.body.skill) {
-                await user.skills.push({
-                    id: crypto.randomBytes(20).toString('hex'),
-                    content: req.body.skill
-                })
-            }
-            await user.save()
-        } catch (error) {
-            next(error)
-        }
-    }
-    return res.redirect('/admin');
-}
-
-
-module.exports.deleteByStudentID = async (req, res, next) => {
-    //find and delete
-    const studentID = req.params.studentID
-    if (req.body.avatarURL) {
-        await UserModel.findOneAndUpdate({ studentID: studentID },
-            { avatarURL: UserModel.schema.path("avatarURL").defaultValue })
-    }
+module.exports.createByStudentID = async(req, res, next) => {
     try {
-        await UserModel.findOneAndUpdate(
-            {
-                studentID: studentID
-            },
-            {
-                $pull: {
-                    projects: { _id: ObjectId(req.body.projectID) },
-                    activities: { _id: ObjectId(req.body.activityID) },
-                    skills: { id: req.body.skillID },
-                },
+        const studentID = req.params.studentID
+        const user = await UserModel.findOne({ studentID: studentID })
+        if (!user) {
+            return res.status(404).send({ error: "User does not found!" })
+        }
+        if (req.body.activityID) {
+            activity = await ActivityModel.findById(req.body.activityID);
+            if (!activity) {
+                return res.status(404).send({ error: "Activity not found!" })
             }
-        )
+            if (!user.activities.every(activity => activity._id != req.body.activityID)) {
+                throw ("Activity is existed!")
+            }
+            user.activities.push(activity)
+        }
+        if (req.body.projectID) {
+            project = await ProjectModel.findById(req.body.projectID);
+            if (!project) {
+                return res.status(404).send({ error: "ProjectID not found!" })
+            }
+            if (!user.projects.every(project => project._id != req.body.projectID)) {
+                throw ("Project is existed!")
+            }
+            user.projects.push(project)
+        }
+        if (req.body.skill) {
+            user.skills = user.skills.concat({ skill: req.body.skill })
+        }
+        await user.save()
+        res.send({ user })
+    } catch (error) {
+        res.status(400).send({ error })
+        next(error)
     }
-    catch (err) {
-        next(err);
-    }
-    return res.redirect('/admin');
 }
 
-module.exports.updateByStudentID = async (req, res, next) => {
-    //find user to update
-    var updateUser = await UserModel.findOne({ studentID: req.params.studentID })
-    if (updateUser) {
+
+module.exports.deleteByStudentID = async(req, res, next) => {
+    //find and delete
+    try {
+        let deletedUser = await UserModel.findOne({ studentID: req.params.studentID })
+        if (!deletedUser) {
+            return res.status(404).send({ message: "User not found!" })
+        }
+        if (req.body.avatarURL) {
+            deletedUser.avatarURL = UserModel.schema.path("avatarURL").defaultValue
+        }
+        if (req.body.projectID) {
+            const index = deletedUser.projects.findIndex(project => project._id == req.body.projectID)
+            if (index == -1) {
+                return res.status(404).send({ error: "ProjectID not found!" })
+            }
+            deletedUser.projects.splice(index, 1)
+        }
+        if (req.body.activityID) {
+            const index = deletedUser.activities.findIndex(activity => activity._id == req.body.activityID)
+            if (index == -1) {
+                return res.status(404).send({ error: "Activity not found!" })
+            }
+            deletedUser.activities.splice(index, 1)
+        }
+        if (req.body.skillID) {
+            const index = deletedUser.skills.findIndex(skill => skill._id == req.body.skillID)
+            if (index == -1) {
+                return res.status(404).send({ error: "Skill not found!" })
+            }
+            deletedUser.skills.splice(index, 1)
+        }
+        await deletedUser.save()
+        res.send({ user: deletedUser })
+    } catch (error) {
+        res.status(500).send({ error })
+        next(error);
+    }
+}
+module.exports.updateByStudentID = async(req, res, next) => {
+
+    try {
+        //find userByStudentID
+        let updateUser = await UserModel.findOne({ studentID: req.params.studentID })
+        if (!updateUser) {
+            return res.status(404).send({ message: "User not found!" })
+        }
+
+
+        //validate
+        const updates = Object.keys(req.body)
+        const allowedUpdates = ['email', 'pwd', 'role', 'studentID', 'birthday', 'avatarURL', 'university']
+        const isValidOperation = updates.every(update => allowedUpdates.includes(update))
+        if (!isValidOperation) {
+            throw ("Invalid fields!")
+        }
         if (req.body.email) {
-            await body('email').isEmail().withMessage('Must be a valid email').run(req);
-            await body('email').custom(async (email) => {
-                if (await UserModel.exists({ email: email })) {
-                    throw new Error("This email has already been registered")
-                }
-            }).run(req)
+            if (!validator.isEmail(req.body.email)) {
+                throw ("Invalid Email")
+            }
+            const existedEmail = await UserModel.findOne({ email: req.body.email })
+            if (existedEmail) {
+                throw ("This email has already been registered")
+            }
         }
         if (req.body.pwd) {
-            await body('pwd').matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})")
-                .withMessage("Password must contain at least 1 lowercase, uppercase, numeric, special character and must be eight characters or longer").run(req)
-        }
-        if (req.body.university) {
-            await body('university').isAlphanumeric().withMessage("University must be string").run(req)
+            if (!validator.matches(req.body.pwd, /^(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/)) {
+                throw ("Password must contain at least 1 uppercase, numeric and must be eight characters or longer")
+            }
+            req.body.pwd = password.hashPwd(req.body.pwd)
         }
         if (req.body.role) {
-            await body('role').isIn(UserModel.schema.path('role').enumValues)
-                .withMessage("Role must be Guest, member or admin").run(req)
+            if (!validator.isIn(req.body.role, UserModel.schema.path('role').enumValues)) {
+                throw ("Role must be Guest, member or admin")
+            }
         }
-
         if (req.body.studentID) {
-            await body('studentID').isNumeric()
-                .withMessage("Student ID must be numeric characters").run(req)
-            await body('studentID').custom(async (studentID) => {
-                if (await UserModel.exists({ studentID: studentID })) {
-                    throw new Error("This student ID has already existed")
-                }
-            }).run(req)
+            if (!validator.isNumeric(req.body.studentID)) {
+                throw ("Student ID must be numeric characters")
+            }
+            if (await UserModel.exists({ studentID: req.body.studentID })) {
+                throw ("This student ID has already existed")
+            }
         }
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(422).json({ errors: errors.array() });
+        if (req.body.avatarURL) {
+            if (!validator.isURL(req.body.avatarURL)) {
+                throw ("Avatar URL is invalid!")
+            }
         }
 
-        //hash password
-        if (req.body.pwd) {
-            req.body.pwd = password.hashPwd(req.body.pwd);
-        }
-        if (req.body.skillID && req.body.skillContent) {
-            content = await UserModel.findOneAndUpdate({
-                studentID: req.params.studentID,
-                'skills.id': req.body.skillID
-            },
-                {
-                    $set: {
-                        'skills.$.content': req.body.skillContent,
-                    },
-                },
-            )
-        };
-        await UserModel.findOneAndUpdate({ studentID: req.params.studentID }, req.body)
-        return res.redirect('/admin');
+        //update
+        updates.forEach(update => updateUser[update] = req.body[update])
+        await updateUser.save()
+
+        res.send({ user: updateUser });
+    } catch (error) {
+        res.status(400).send({ error: error })
+        next()
     }
-    return res.status(404).json({
-        errors:
-        {
-            value: req.params.studentID,
-            msg: "Student Id does not exist",
-            param: "studentID",
-            location: "param"
-        }
-    })
 }
 
-module.exports.index = async (req, res, next) => {
+
+module.exports.index = async(req, res, next) => {
     const users = await UserModel.find();
     return res.json(users)
 };
