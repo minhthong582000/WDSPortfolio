@@ -1,4 +1,5 @@
-const UserModel = require('../models/user');
+const UserModel = require('../models/user')
+// const password = require('../services/password') //này đang lỗi, tạm cmt(Dưa Hauz)
 const ProjectModel = require('../models/projects')
 const ActivityModel = require('../models/activities')
 const validator = require('validator')
@@ -148,3 +149,4 @@ module.exports.index = async(req, res, next) => {
     const users = await UserModel.find();
     return res.json(users)
 };
+

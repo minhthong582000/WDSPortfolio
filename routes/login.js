@@ -1,8 +1,13 @@
+const passport = require('passport');
 const express = require('express');
 const router = express.Router();
-/* GET users listing. */
+const uservalidate = require('../controller/AuthController');
+
+//local-login
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-  next();
+  res.status(200).json({"msg": "success call login page"});
 });
+router.post('/',uservalidate.checkInputLogin);
+
+
 module.exports = router;
