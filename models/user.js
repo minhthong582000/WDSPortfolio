@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', true);
 const bcrypt = require('bcryptjs');
 
 const userSchema = mongoose.Schema({
@@ -37,12 +38,13 @@ const userSchema = mongoose.Schema({
     },
 
     activities: {
-        type: Array
+        type: Array,
     },
-    
-    skills: {
-        type: Array
-    },
+    skills: [{
+        skill: {
+            type: String,
+        }
+    }],
     pwdreset: {
         token: String,
         expire: {
@@ -93,4 +95,3 @@ userSchema.methods.validPassword = function (password) {
     return bcrypt.compareSync(password, this.pwd);
 };
 module.exports = mongoose.model('users', userSchema);
-

@@ -5,11 +5,11 @@ const userController = require('../controller/userController')
 /* GET users listing. */
 router.get('/', userController.index);
 
-router.post('/create/:studentID', userController.createByStudentID)
+router.post('/:studentID', userController.createByStudentID)
 
-router.post('/update/:studentID', userController.updateByStudentID)
+router.patch('/:studentID', userController.updateByStudentID)
 
-router.post('/delete/:studentID', userController.deleteByStudentID)
+router.delete('/:studentID', userController.deleteByStudentID)
 
 
 module.exports = router;

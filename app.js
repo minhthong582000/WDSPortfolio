@@ -61,24 +61,22 @@ mongoose.connect(process.env.DB_CONNECT || 'mongodb://localhost:27017/admin', mo
         console.log('connect to database')
 })
 
-
-
 //REDIRECT WRONG URL.
 app.get('/warning/error', (req, res) => {
     res.status(400).send('Something wrong!');
 });
-app.all('*', function (req, res) {
+app.all('*', function(req, res) {
     res.redirect('/warning/error');
 });
 
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
     next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -86,7 +84,6 @@ app.use(function (err, req, res, next) {
     // send error status
     res.status(err.status || 500);
 });
-
 app.listen(3000,function(){
     console.log('app listen port 3000');
 })
